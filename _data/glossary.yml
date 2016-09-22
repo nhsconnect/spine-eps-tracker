@@ -1,0 +1,5 @@
+first_of_type: "The chosen recipient(s) to test the first deployment of the new capabilities."
+consumer: "A system which consumes data using existing Open APIs"
+provider: "A system which provides data by exposing Open APIs"
+accreditation: "The action or process used to ensure that a system provider meets necessary criteria to use the Open API services."
+assurance: "A set of activities intended to provide confidence that a system works as described and in a safe and secure way."

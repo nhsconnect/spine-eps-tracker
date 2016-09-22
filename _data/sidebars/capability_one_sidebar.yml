@@ -1,0 +1,28 @@
+entries:
+- title: Capability One
+  product: Capability One<br/>
+  version: 1.0.0-alpha.1
+  levels: one
+  folders:
+
+  - title: Get Started
+    output: web
+    folderitems:
+    - title: Introduction
+      url: /capability_one.html
+      output: web
+      type: homepage
+    - title: Release Notes
+      url: /capability_one_release_notes.html
+      output: web
+    - title: Known Issues
+      url: /capability_one_known_issues.html
+      output: web
+
+  - title: API Use Cases
+    output: web
+    folderitems:
+
+    - title: First use case
+      url: /capability_one_first_use_case.html
+      output: web
