@@ -15,5 +15,6 @@ An introduction to provide users of the EPS Prescription Tracker with the inform
 ## Purpose ##
 
 The Prescription Tracker service provides a read only interface to obtain information about a patient’s prescriptions. It is written as a proprietary interface as defined in the following document. The tracker utilises a synchronous request / response pattern. It is synchronous with respect to HTTP connections which means that only a single HTTP connection is required to perform a complete request. Future interfaces on Spine2 are will tend towards this simple pattern wherever possible with the intention of eventually removing the need for asynchronous ebXML communications.
+
 The prescription tracker provides a REST interface with two queries – prescription search and prescription retrieve - allowing querying to take place utilising a simple syntax. Both queries utilise a GET request which is made to the service and which returns a json result. 
 
