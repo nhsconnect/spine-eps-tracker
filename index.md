@@ -1,5 +1,5 @@
 ---
-title: Introduction
+title: Introduction to Spine EPS Tracker
 keywords: homepage
 tags: [getting_started]
 sidebar: overview_sidebar
