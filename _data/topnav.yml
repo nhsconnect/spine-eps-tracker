@@ -13,7 +13,7 @@ topnav_dropdowns:
           external_url: http://www.google.com/
         - title: External Link 2
           external_url: http://www.yahoo.com/        
-    - title: Capability Packs
-      folderitems:
-        - title: Capability One
-          url: capability_one.html
+#    - title: Capability Packs
+#      folderitems:
+#        - title: Capability One
+#          url: capability_one.html

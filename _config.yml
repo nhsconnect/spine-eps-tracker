@@ -2,13 +2,13 @@
 output: web
 # this property is useful for conditional filtering of content that is separate from the PDF.
 
-topnav_title: Site Title and Tag Line
+topnav_title: Spine ePS Tracker
 # this appears on the top navigation bar next to the home button
 
-site_title: Site Title
+site_title: Spine ePS Tracker
 # this appears in the html browser tab for the site title (seen mostly by search engines, not users)
 
-company_name: Company Name
+company_name: NHS Digital
 # this appears in the footer
 
 github_editme_path: /edit/master/
@@ -97,7 +97,7 @@ description: "Description of the site."
 sitemap: true
 
 # needed for sitemap.xml file only
-url: https://github_account.github.io/github_repo
+url: https://nhsconnect.github.io/spine-eps-tracker
 
 repository: github_account/github_repo
 
