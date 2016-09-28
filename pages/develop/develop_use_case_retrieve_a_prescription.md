@@ -82,6 +82,8 @@ The parameter names are as follows, note that these are case sensitive:
 
 <sup>1</sup>If not supplied the current issue (instance) will be used. If specified and the instance doesn't exist the rest of the prescription details will be returned but the instance details will be left blank.
 
+> The Spine Interaction Id for this operation is `ExternalPrescriptionQuery_1_0`.
+
 #### Error Handling ####
 
 If the query is unsuccessful the statusCode not be '0' and the reason will be populated.

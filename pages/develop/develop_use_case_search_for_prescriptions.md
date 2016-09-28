@@ -77,7 +77,7 @@ The incoming headers are validated to ensure the correct type and length of para
 | `Spine-RoleProfileId` | N | 12 | 12 digits | N |
 | `Eps-TraceId` | N | Max 30 | Up to 30 characters (upper or lower case), digits or the – (dash) | N |
 
-> The Spine Interaction Id for this operation is `urn:nhs:names:services:mmquery`.
+> The Spine Interaction Id for this operation is `ExternalPrescriptionSearch_1_0`.
 
 #### Payload Request Parameters ####
 
