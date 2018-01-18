@@ -104,7 +104,7 @@ repository: github_account/github_repo
 gist:
   noscript: false
 
-gems:
+plugins:
    - jekyll-github-metadata
    - jekyll-mentions
    - jemoji
