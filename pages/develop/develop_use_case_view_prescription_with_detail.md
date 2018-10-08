@@ -3,30 +3,32 @@ title: Search for prescriptions
 keywords: develop
 tags: [develop]
 sidebar: overview_sidebar
-permalink: develop_use_case_search_for_prescriptions.html
+permalink: develop_use_case_view_prescription_with_detail.html
 summary: Search for prescriptions
 ---
 
 ## API Use Case ##
 
-This specification describes a single use cases (i.e. Search for a list of prescriptions).
+As a clinician I would like to view a prescriptions for a patient who has presented to me
+ so that I can
 
 ## Security ##
 
 - Consumers and Producers SHALL utilise TLS Mutual Authentication (TLS-MA).
+- Producers SHALL verify that the requestor's entry on Spine Directory Service is registered to use the prescription detail interaction.
 
 ## Prerequisites ##
 
 ### Consumer ###
 
-To search for a list of prescriptions the external system will make an HTTP request which should include, as a minimum, the following parameters:
+To search for a list of prescriptions the external system will make an HTTP request which must include, as a minimum, the following parameters:
 
 - NHS Number
 - Format (this is a fixed value of ‘trace-summary’. Introduced for forwards compatibility)
 
 In addition, the external system may also provide the following optional parameters:
 
-- Prescription date range (earliest and/or latest)<sup>1</sup>
+- Prescription effective date range (earliest and latest date)<sup>1</sup>
 - Prescription status
 - Prescription Version
 - Message version<sup>2</sup>
@@ -46,11 +48,8 @@ In addition, the external system may also provide the following optional paramet
 #### Absolute Request ####
 
 ```http
-GET https://[eps_tracker_server]/mm/prescriptions?nhsNumber={nhsNumber}&format=trace-summary&earliestDate={earliestDate}&latestDate={latestDate}&prescriptionStatus={prescriptionStatus}&prescriptionVersion={prescriptionVersion}&version={version}
+GET https://[eps_tracker_server]/mm/prescriptionsWithDetail?nhsNumber={nhsNumber}&format=trace-summary&earliestDate={earliestDate}&latestDate={latestDate}&prescriptionStatus={prescriptionStatus}&prescriptionVersion={prescriptionVersion}&version={version}
 ```
-
-> [eps_tracker_server] = mm-sync.national.ncrs.nhs.uk
-
 #### Request Headers ####
 
 Consumers SHALL include the following additional HTTP request headers:
@@ -437,18 +436,4 @@ Provider systems:
   },
   "statusCode": "0"
 }
-```
-
-## Examples ##
-
-### C# ###
-
-```csharp
-Hello World
-```
-
-### Java ###
-
-```java
-Hello World
 ```

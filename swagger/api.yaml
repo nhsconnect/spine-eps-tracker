@@ -1,0 +1,699 @@
+swagger: '2.0'
+info:
+  description: Prescription Tracker API
+  version: 2.0.0-alpha
+  title: Prescription Tracker API
+host: 'nww.int.spine2.ncrs.nhs.uk:443'
+basePath: /mm
+produces:
+  - application/json
+tags:
+  - name: Basic
+    description: Basic prescription information, containing no sensitive or clinical information
+    externalDocs:
+      url: http://developer.nhs.uk
+  - name: Clinical Detail
+    description: Detailed prescription information, containing clinical information
+    externalDocs:
+      url: http://developer.nhs.uk
+paths:
+  /prescriptions:
+    get:
+      description: |
+        Search for prescriptions, showing basic detail in the response.
+        The Spine Interaction Id for this operation is `urn:nhs:names:services:mmquery:ExternalPrescriptionSearch_1_0`
+      tags:
+        - Basic
+      parameters:
+        - name: Spine-From-Asid
+          in: header
+          description: Accredited System ID for the requesting system
+          required: true
+          type: string
+        - name: Spine-UserId
+          in: header
+          description: NHS authenticated User ID from CIS authentication process
+          required: true
+          type: string
+        - in: header
+          name: Spine-RoleProfileId
+          description: NHS authenticated user's Role Profile ID from CIS authentication process
+          required: true
+          type: string
+        - in: header
+          name: Eps-TraceId
+          description: Consumer's TraceID (i.e. GUID/UUID). This is reflected back in the response allowing queries to be traced throughout the system
+          type: string
+        - name: nhsNumber
+          in: query
+          type: string
+          description: |
+            Patient NHS number, which must have been traced and verified.
+          required: true
+        - name: format
+          in: query
+          required: true
+          description: Fixed string, which must be `trace-summary` for this resource
+          type: string
+          enum: ['trace-summary']
+        - name: earliestDate
+          in: query
+          type: string
+          format: date
+        - name: latestDate
+          in: query
+          type: string
+          format: date
+        - name: prescriptionStatus
+          in: query
+          description: |
+            Prescription status code, from the extended _PrescriptionStatus_ vocabulary:
+              * `0000` - AWAITING_RELEASE_READY
+              * `0001` - TO_BE_DISPENSED
+              * `0002` - WITH_DISPENSER
+              * `0003` - WITH_DISPENSER_ACTIVE
+              * `0004` - EXPIRED
+              * `0005` - CANCELLED
+              * `0006` - DISPENSED
+              * `0007` - NOT_DISPENSED
+              * `0008` - CLAIMED
+              * `0009` - NO_CLAIMED
+              * `9000` - REPEAT_DISPENSE_FUTURE_INSTANCE
+              * `9001` - FUTURE_DATED_PRESCRIPTION
+              * `9005` - PENDING_CANCELLATION
+          type: string
+          enum: ['0001','0002','0003','0004','0005','0006','0007','0008','0009','9000','9001','9005']
+        - name: prescriptionVersion
+          in: query
+          description: |
+            EPS Release number allowing EPS R1 (paper) and R2 (electronic) prescriptions to be filtered. EPS R1 status is not reliable as there is no requirement for dispensers to mark as dispensed or claimed or ability to cancel, and the existence of an R1 prescription on Spine does not mean that the prescription has been made available to the patient.
+          type: string
+          enum: ['1','2','R1','R2']
+        - name: version
+          in: query
+          description: |
+            API version, allowing the endpoint to support multiple response types. Currently only `1` supported.
+          type: string
+          enum: ['1']
+      responses:
+        '200':
+          description: Prescriptions found
+          schema:
+            $ref: '#/definitions/PrescriptionSearchResponse'
+          examples:
+            application/json: { "prescriptionList": {"0FBD16-C81007-00001S": {"prescriptionTreatmentType": { "prescriptionTreatmentTypeText": "Acute Prescription", "prescriptionTreatmentTypeCode": "0001"},"prescriptionIssueDate": "20180808120800","pendingCancellations": "False","lastEventDate": "20180808124008","currentIssueNumber": "1","issues": { "1": { "issueDate": "False", "lineItems": {"1": {"status": { "statusText": "To Be Dispensed", "statusCode": "0007"}},"3": {"status": { "statusText": "To Be Dispensed", "statusCode": "0007"}},"2": {"status": { "statusText": "To Be Dispensed", "statusCode": "0007"}} }, "prescriptionStatus": {"statusText": "To Be Dispensed","statusCode": "0001" } }},"patientNhsNumber": "9446363160"},"72EA1D3F-6E35-6CDD-E050-D20AE3A24638K": {"prescriptionTreatmentType": { "prescriptionTreatmentTypeText": "Acute Prescription", "prescriptionTreatmentTypeCode": "0001"},"prescriptionIssueDate": "20180808120800","pendingCancellations": "False","lastEventDate": "20180808123627","currentIssueNumber": "1","issues": { "1": { "issueDate": "False", "lineItems": {"1": {"status": { "statusText": "To Be Dispensed", "statusCode": "0007"}},"2": {"status": { "statusText": "To Be Dispensed", "statusCode": "0007"}} }, "prescriptionStatus": {"statusText": "To Be Dispensed","statusCode": "0001" } }},"patientNhsNumber": "9446363160"} }, "reason": "", "version": "1", "statusCode": "0" }
+        '500':
+          description: Unexpected error occurred
+  /prescriptions/{prescriptionId}:
+    get:
+      description: |
+        View a specific prescription (issue), showing basic detail in the response.
+        The Spine Interaction Id for this operation is `urn:nhs:names:services:mmquery:ExternalPrescriptionQuery_1_0`
+      tags:
+        - Basic
+      parameters:
+        - name: Spine-From-Asid
+          in: header
+          description: Accredited System ID for the requesting system
+          required: true
+          type: string
+        - name: Spine-UserId
+          in: header
+          description: NHS authenticated User ID from CIS authentication process
+          required: true
+          type: string
+        - in: header
+          name: Spine-RoleProfileId
+          description: NHS authenticated user's Role Profile ID from CIS authentication process
+          required: true
+          type: string
+        - in: header
+          name: Eps-TraceId
+          description: Consumer's TraceID (i.e. GUID/UUID). This is reflected back in the response allowing queries to be traced throughout the system
+          type: string
+        - name: prescriptionId
+          in: path
+          type: string
+          description: Prescription ID, which must be the short form prescription ID for EPS R2 prescriptions or the GUID for EPS R1.
+          required: true
+        - name: issueNumber
+          in: query
+          type: number
+          format: integer
+          description: If not supplied the current issue will be used. If specified and the instance doesn’t exist the rest of the prescription details will be returned but the instance details will be left blank.
+          required: false
+        - name: format
+          in: query
+          required: true
+          description: Fixed string, which must be `trace` for this resource
+          type: string
+          enum: ['trace']
+        - name: version
+          in: query
+          description: |
+            API version, allowing the endpoint to support multiple response types. Currently only `1` supported.
+          type: string
+          enum: ['1']
+      responses:
+        '200':
+          description: Prescription found
+          schema:
+            $ref: '#/definitions/PrescriptionResponse'
+          examples:
+            application/json: {"reason": "", "version": "1", "prescription": {"prescriptionType": {"prescriptionTypeText": "GENERAL PRACTITIONER PRESCRIBING - GP", "prescriptionTypeCode": "0101"}, "prescriptionTreatmentType": {"prescriptionTreatmentTypeText": "Repeat Dispensing", "prescriptionTreatmentTypeCode": "0003"}, "nominatedDispenserODS": "FL584", "daysSupply": "28", "pendingCancellations": "False", "prescribingOrganisationName": "VERNON STREET MEDICAL CTR", "prescribingOrganisationContact": "01332332812", "signingDate": "20180808120800", "currentIssueNumber": "1", "prescribingOrganisationODS": "C81007", "prescriptionId": "78D842-C81007-00001H", "lastEventDate": "20180808124546", "nominatedDispenserName": "ALLIANCE PHARMACY", "issue": {"dispensingOrganisationODS": "False", "appliedCancellations": "False", "lastDispenseDate": "False", "dispensingOrganisationContact": "", "issueNumber": "1", "lineItems": {"1": {"status": {"statusText": "To Be Dispensed", "statusCode": "0007"}, "id": "72EA1D3F-7318-6CDD-E050-D20AE3A24638"}}, "prescriptionStatus": {"statusText": "To be dispensed", "statusCode": "0001"}, "dispensingOrganisationName": ""}, "patientNhsNumber": "9446363160"}, "statusCode": "0"}
+        '500':
+          description: Unexpected error occurred
+  /nhs111itemsummary:
+    get:
+      description: |
+        Search for prescriptions, showing a summary of clinical detail in the reponse
+        The Spine Interaction Id for this operation is `urn:nhs:names:services:mmquery:NHS111_ItemSummary`
+      tags:
+        - Clinical Detail
+      parameters:
+        - name: Spine-From-Asid
+          in: header
+          description: Accredited System ID for the requesting system
+          required: true
+          type: string
+        - name: Spine-UserId
+          in: header
+          description: NHS authenticated User ID from CIS authentication process
+          required: true
+          type: string
+        - in: header
+          name: Spine-RoleProfileId
+          description: NHS authenticated user's Role Profile ID from CIS authentication process
+          required: true
+          type: string
+        - in: header
+          name: Eps-TraceId
+          description: Consumer's TraceID (i.e. GUID/UUID). This is reflected back in the response allowing queries to be traced throughout the system
+          type: string
+        - name: nhsNumber
+          in: query
+          type: string
+          description: |
+            Patient NHS number, which must have been traced and verified.
+          required: true
+      responses:
+        '200':
+          description: Prescriptions found
+          schema:
+            $ref: '#/definitions/111PrescriptionSummaryResponse'
+          examples:
+            application/json: { "version" : "1", "reason" : "", "statusCode" : "0", "prescriptions" : {"2D35F7-ZA0448-11E88Z" : { "lastEventDate" : "20180422095703", "prescriptionIssueDate" : "20180117095703", "patientNhsNumber" : "9912003489", "epsVersion" : "R2", "repeatInstance" : {“currentIssue” : "2",“totalAuthorised” : “6” }, "pendingCancellations" : "False", "prescriptionTreatmentType" : "Repeat Dispensing", "prescriptionStatus" :"Dispensed", "lineItems" : {"30b7e9cf-6f42-40a8-84c1-e61ef638eee2" : "Perindopril erbumine 2mg tablets","636f1b57-e18c-4f45-acae-2d7db86b6e1e" : "Metformin 500mg modified-release tablets" }},"ABC5F7-ZA0448-77E88X" : { "lastEventDate" : "20180319115010", "prescriptionIssueDate" : "20180319101307", "patientNhsNumber" : "9912003489", "epsVersion" : "R2", "currentIssueNumber" : "1", "pendingCancellations" : "False", "prescriptionTreatmentType" : "Acute Prescribing", "prescriptionStatus" :"Dispensed", "lineItems" : {"636f1b57-e18c-4f45-acae-2d7db86b6e1e" : "Hydrocortisone 0.5% cream" } } }}
+        '500':
+          description: Unexpected error occurred
+  /nhs111itemdetail:
+    get:
+      description: |
+        Search for prescriptions, showing clinical detail in the reponse. The Spine Interaction Id for this operation is `urn:nhs:names:services:mmquery:NHS111_ItemDetail`
+      tags:
+        - Clinical Detail
+      parameters:
+        - name: Spine-From-Asid
+          in: header
+          description: Accredited System ID for the requesting system
+          required: true
+          type: string
+        - name: Spine-UserId
+          in: header
+          description: NHS authenticated User ID from CIS authentication process
+          required: true
+          type: string
+        - in: header
+          name: Spine-RoleProfileId
+          description: NHS authenticated user's Role Profile ID from CIS authentication process
+          required: true
+          type: string
+        - in: header
+          name: Eps-TraceId
+          description: Consumer's TraceID (i.e. GUID/UUID). This is reflected back in the response allowing queries to be traced throughout the system
+          type: string
+        - name: nhsNumber
+          in: query
+          type: string
+          description: |
+            Patient NHS number, which must have been traced and verified.
+          required: true
+        - name: prescriptionId
+          in: query
+          type: string
+          description: |
+            Prescription ID
+          required: true
+        - name: issueNumber
+          in: query
+          type: string
+          description: |
+            Mandatory if for repeat dispensing. If not supplied and prescription only has one issue (i.e. an acute or repeat prescribing prescription) then return that single instance. If not supplied for repeat dispensing, return an error condition.
+          required: false
+        - name: lineitemid
+          in: query
+          type: string
+          description: |
+            Prescription Item ID  Optional. If not supplied, return details for all line items on the prescription.
+          required: false
+      responses:
+        '200':
+          description: Prescriptions found
+          schema:
+            $ref: '#/definitions/111PrescriptionDetailResponse'
+          examples:
+            application/json: {"version": "1","reason": "","statusCode": "0","2D35F7-ZA0448-11E88Z": {"prescriptionStatus": "Dispensed","lastEventDate" : "20180422095703","prescriptionIssueDate": "20180117095703","prescriptionDownloadDate": "20180421095703","prescriptionDispensedDate": "20180422095703","prescriptionClaimedDate": "","prescriptionLastIssueDispensedDate": "20180318095703","patientNhsNumber": "9912003489","epsVersion": "R2","pendingCancellations": "False","prescriptionTreatmentType": "Repeat Dispensing","repeatInstance": {"currentIssue": "2","totalAuthorised": "6"},"prescriber" : {"name" : "EveryDay Surgery","address" : "Beacon Lane, Harlow, Essex, HP6 1TT","phone" : "01234098765","ods" : "M12345"},"nominatedPharmacy" : {"name" : "ACME Pharmacy","address" : "23 High Street, Harlow, Essex, HP2 7RE","phone" : "01234567890","ods" : "FF123"},"dispensingPharmacy" : {"name" : "Freds Pharmacy","address" : "7 Waterfields Way, Harlow, Essex, HP2 5AB","phone" : "01234567999","ods" : "FB444"},"lineItems" : {"30b7e9cf-6f42-40a8-84c1-e61ef638eee2": {"description" : "Perindopril erbumine 2mg tablets","quantity" : "28","uom" : "tablet","dosage" : "One tablet in the morning","itemStatus" : "Dispensed","code" : "318896009"},"636f1b57-e18c-4f45-acae-2d7db86b6e1e": {"description" : "Metformin 500mg modified-release tablets","quantity" : "56","uom" : "tablet","dosage" : "One tablet twice a day","itemStatus" : "Dispensed","code" : "386047000"}}}}
+        '500':
+          description: Unexpected error occurred
+definitions:
+  Response:
+    type: object
+    required:
+    - version
+    - statusCode
+    - reason
+    properties:
+      version:
+        type: string
+        example: 1
+      reason:
+        type: string
+        example: "Invalid or missing NHS number"
+        description: |
+          Description of any error
+      statusCode:
+        type: number
+        format: integer
+        example: 1
+        description: |
+          *  `1` - NO_MATCHING_RECORDS - 'No prescriptions found matching search criteria'
+          *  `2` - INVALID_NHS_NUMBER - 'Invalid or missing NHS number'
+          *  `5` - UNEXPECTED_ERROR - 'Unexpected exception'
+          *  `6` - PRESCRIPTION_NOT_FOUND - 'Prescription ID not found'
+          * `7` - LINEITEM_NOT_FOUND - 'Prescription Line Item ID not found'
+          * `8` - INSTANCE_NOT_FOUND - 'Prescription repeat instance not found'
+  PrescriptionSearchResponse:
+    allOf:
+      - $ref: '#/definitions/Response'
+      - properties:
+          prescriptionList:
+            type: object
+            description: a Map of prescription ID to prescription
+            additionalProperties:
+              $ref: '#/definitions/PrescriptionSummary'
+  PrescriptionResponse:
+    allOf:
+      - $ref: '#/definitions/Response'
+      - type: object
+        properties:
+          prescription:
+            type: object
+            $ref: '#/definitions/Prescription'
+  111PrescriptionSummaryResponse:
+    allOf:
+      - $ref: '#/definitions/Response'
+        additionalProperties:
+          $ref: '#/definitions/111PrescriptionSummary'
+  111PrescriptionDetailResponse:
+    allOf:
+      - $ref: '#/definitions/Response'
+      - type: object
+        properties:
+          prescriptions:
+            type: object
+            description: a Map of prescription ID to prescription
+            additionalProperties:
+              $ref: '#/definitions/111PrescriptionDetail'
+  Prescription:
+    type: object
+    properties:
+      patientNhsNumber:
+        type: string
+        description: NHS Number.
+        example: 9232524433
+      prescriptionTreatmentType:
+        type: object
+        $ref: '#/definitions/PrescriptionTreatmentType'
+      prescriptionType:
+        type: object
+        $ref: '#/definitions/PrescriptionType'
+      nominatedDispenserODS:
+        type: string
+        description: ODS code of the dispenser nominated on issue - may not be present for non-nominated prescriptions
+        example: FLB48
+      nominatedDispenserName:
+        type: string
+        description: Name of the dispenser nominated on issue - may not be present for non-nominated prescriptions
+        example: CROYDON PHARMACY
+      daysSupply:
+        type: number
+        format: integer
+        description: number of days of medication this prescription is intended to cover. Default value of 28
+        example: 28
+        default: 28
+      pendingCancellations:
+        type: boolean
+        description: True where a cancellation has been received for the prescription or an item but has not been able to be applied.
+        example: false
+      prescribingOrganisationName:
+        type: string
+        description: Organisation generating the prescription, as stated on the prescription
+        example: VALE STREET MEDICAL PRACTICE
+      prescribingOrganisationContact:
+        type: string
+        description: Telephone contact for the organisation generating the prescription, as stated on the prescription
+        example: 03003768495
+      prescribingOrganisationODS:
+        type: string
+        description: ODS code of the prescribing organisation
+        example: L80532
+      signingDate:
+        type: string
+        description: Datetime of signature of EPS R2 prescriptions. Format is HL7 - YYYYMMDDHHMMSS
+        example: 20180903113008
+      currentIssueNumber:
+        type: number
+        format: integer
+        description: Issue number of the prescription. Set to 1 in the case of repeat dispensing prescriptions.
+        example: 1
+      lastEventDate:
+        type: string
+        description: Date of most recent event affecting the prescription. Format is HL7 - `YYYYMMDD`
+        example: 20180903
+      prescriptionStatus:
+        type: object
+        $ref: '#/definitions/PrescriptionStatus'
+      issue:
+        type: object
+        $ref: '#/definitions/Issue'
+  PrescriptionSummary:
+    type: object
+    properties:
+      patientNhsNumber:
+        type: string
+        description: NHS Number.
+        example: 9232524433
+      prescriptionTreatmentType:
+        type: object
+        $ref: '#/definitions/PrescriptionTreatmentType'
+      pendingCancellations:
+        type: boolean
+        description: True where a cancellation has been received for the prescription or an item but has not been able to be applied.
+        example: false
+      currentIssueNumber:
+        type: number
+        format: integer
+        description: Issue number of the prescription. Set to 1 in the case of repeat dispensing prescriptions.
+        example: 1
+      lastEventDate:
+        type: string
+        description: Datetime in UTC of most recent event affecting the prescription. Format is HL7 - `YYYYMMDDHHMMSS`
+        example: 20180808124008
+      issues:
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/IssueSummary'
+  111PrescriptionSummary:
+    type: object
+    properties:
+      patientNhsNumber:
+        type: string
+        description: NHS Number.
+        example: 9232524433
+      status:
+        type: string
+        description: Prescription Status
+        example: To Be Dispensed
+      prescriptionTreatmentType:
+        type: object
+        $ref: '#/definitions/PrescriptionTreatmentType'
+      effectiveDate:
+        type: string
+        description: Clinically effective date(time), which may be in the future for post-dated prescriptions. Format is HL7 - YYYYMMDDHHMMSS
+        example: 20180903113008
+      repeatInstance:
+        type: object
+        properties:
+          currentIssue:
+            type: number
+            format: integer
+            description: Issue number of the prescription. Set to 1 in the case of acute prescriptions.
+            example: 1
+          totalAuthorised:
+            type: number
+            format: integer
+            description: Number of issues in total. Set to 1 in the case of acute prescriptions.
+            example: 1
+      lastEventDate:
+        type: string
+        description: Datetime in UTC of most recent event in UTC. Events include dispensing, claiming, nomination changes, cancellation attempts and repeat dispensing issues becoming due. Format is HL7 - `YYYYMMDDHHMMSS`
+        example: 20180903120000
+      epsVersion:
+        description: |
+          EPS Release number allowing EPS R1 (paper) and R2 (electronic) prescriptions to be filtered. EPS R1 status is not reliable as there is no requirement for dispensers to mark as dispensed or claimed or ability to cancel, and the existence of an R1 prescription on Spine does not mean that the prescription has been made available to the patient
+        type: string
+        enum: ['R1','R2']
+      pendingCancellations:
+        type: boolean
+        description: True where a cancellation has been received for the prescription or an item but has not been able to be applied.
+        example: false
+      lineItems:
+        description: a Map of line item ID (GUID) to medication
+        type: object
+        additionalProperties:
+          type: string
+          description: Medication name, strength and form as per dm+d concept definition
+          example: "Hydrocortisone 0.5% cream"
+  111PrescriptionDetail:
+    type: object
+    properties:
+      patientNhsNumber:
+        type: string
+        description: NHS Number.
+        example: 9232524433
+      repeatInstance:
+        type: object
+        properties:
+          currentIssue:
+            type: number
+            format: integer
+            description: Issue number of the prescription. Set to 1 in the case of acute prescriptions.
+            example: 1
+          totalAuthorised:
+            type: number
+            format: integer
+            description: Number of issues in total. Set to 1 in the case of acute prescriptions.
+            example: 1
+      prescriptionStatus:
+        type: string
+        description: Prescription Status
+        example: To Be Dispensed
+      prescriptionDownloadDate:
+        type: string
+        description: Datetime in UTC of most recent prescription download event. Format is HL7 - `YYYYMMDDHHMMSS`
+        example: 20180903120000
+      prescriptionDispensedDate:
+        type: string
+        description: Datetime in UTC of most recent dispensing event, which includes withdraws, updates and dispense history rebuilds. Format is HL7 - `YYYYMMDDHHMMSS`
+        example: 20180903120000
+      prescriptionClaimedDate:
+        type: string
+        description: Datetime in UTC of most recent claim event, which includes claim updates. Format is HL7 - `YYYYMMDDHHMMSS`
+        example: 20180903120000
+      prescriptionLastIssueDispensedDate:
+        type: string
+        description: Datetime in UTC of dispense of the previous issue of a repeat dispensing prescription. For repeat dispensing prescriptions, only where the current issue is not the first issue. Format is HL7 - `YYYYMMDDHHMMSS`
+        example: 20180903120000
+      effectiveDate:
+        type: string
+        description: Clinically effective date(time), which may be in the future for post-dated prescriptions. Format is HL7 - YYYYMMDDHHMMSS
+        example: 20180903120000
+      lastEventDate:
+        type: string
+        description: Datetime in UTC of most recent event. Events include dispensing, claiming, nomination changes, cancellation attempts and repeat dispensing issues becoming due. Format is HL7 - `YYYYMMDDHHMMSS`
+        example: 20180903
+      prescriptionTreatmentType:
+        type: object
+        $ref: '#/definitions/PrescriptionTreatmentType'
+      epsVersion:
+        description: |
+          EPS Release number allowing EPS R1 (paper) and R2 (electronic) prescriptions to be filtered. EPS R1 status is not reliable as there is no requirement for dispensers to mark as dispensed or claimed or ability to cancel, and the existence of an R1 prescription on Spine does not mean that the prescription has been made available to the patient
+        type: string
+        enum: ['R1','R2']
+      pendingCancellations:
+        type: boolean
+        description: True where a cancellation has been received for the prescription or an item but has not been able to be applied.
+        example: false
+      lineItems:
+        description: a Map of line item ID (GUID) to medication
+        type: object
+        additionalProperties:
+          type: object
+          $ref: '#/definitions/LineItemDetail'
+      prescriber:
+        type: object
+        description: Details of the author's organisation, taken from the prescription
+        $ref: '#/definitions/Organisation'
+      nominatedPharmacy:
+        type: object
+        description: Details of the nominated dispenser, with details retrieved from SDS. Null in the case of non-nominated prescriptions.
+        $ref: '#/definitions/Organisation'
+      dispensingPharmacy:
+        type: object
+        description: Details of the dispensing dispenser, with details from the prescription download request. Null in the case of prescriptons which are not With Dispenser (-Active), Dispensed or Claimed
+        $ref: '#/definitions/Organisation'
+
+  PrescriptionTreatmentType:
+    type: object
+    properties:
+      prescriptionTreatmentTypeCode:
+        type: string
+        description: Prescription Treatment Type code
+        example: 0002
+      prescriptionTreatmentTypeText:
+        type: string
+        description: Prescription Treatment Type description
+        example: Repeat Prescribing
+  PrescriptionType:
+    type: object
+    properties:
+      prescriptionTypeText:
+        type: string
+        description: Prescriber type e.g. GENERAL PRACTITIONER PRESCRIBING
+        example: GENERAL PRACTITIONER PRESCRIBING
+      prescriptionTypeCode:
+        type: string
+        description: Prescriber type code, e.g. 0001
+        example: '0001'
+  PrescriptionStatus:
+    type: object
+    properties:
+      statusText:
+        type: string
+        description: Status description
+        example: To Be Dispensed
+      statusCode:
+        type: string
+        description: Status code, e.g. 0001
+        example: '0001'
+  LineItem:
+    type: object
+    properties:
+      status:
+        $ref: '#/definitions/PrescriptionStatus'
+      id:
+        type: string
+        description: Line item ID, GUID/UUID
+        example: BF60972C-9859-418B-92C7-A53DD7B74727
+  LineItemDetail:
+    type: object
+    properties:
+      itemStatus:
+        $ref: '#/definitions/PrescriptionStatus'
+      description:
+        type: string
+        description: Prescribed medication name, strength and form as per dm+d concept definition
+        example: Metformin 500mg modified-release tablets
+      code:
+        type: string
+        description: Concept ID for prescribed medication.
+        example: 0000322238
+      quantity:
+        type: number
+        format: float
+        description: Medication quantity.Numeric but may include a decimal, e.g. “12.5”
+        example: 12.5
+      uom:
+        type: string
+        description: Quantity unit of measure description
+        example: ml
+      uomcode:
+        type: string
+        description: Concept ID for unit of measure.
+        example: 0000322238
+      dosage:
+        type: string
+        description: Dosage instruction
+        example: Take one twice a day
+      repeatInstance:
+        type: object
+        properties:
+          currentIssue:
+            type: number
+            format: integer
+            description: Issue number of the prescription. Set to 1 in the case of acute prescriptions.
+            example: 1
+          totalAuthorised:
+            type: number
+            format: integer
+            description: Number of issues in total. Set to 1 in the case of acute prescriptions.
+            example: 1
+  Issue:
+    type: object
+    properties:
+      dispensingOrganisationODS:
+        type: string
+      dispensingOrganisationName:
+        type: string
+      appliedCancellations:
+        type: boolean
+        example: false
+      lastDispenseDate:
+        type: string
+        description: Date of the most recent dispensing event for this item. HL7 format - YYYYMMDD
+        example: 20180903
+      dispensingOrganisationContact:
+        type: string
+        description: Phone number of dispensing organisation, not including scheme
+        example: 01674463732
+      issueNumber:
+        type: number
+        format: integer
+        example: 1
+      prescriptionStatus:
+        $ref: '#/definitions/PrescriptionStatus'
+      lineItems:
+        type: object
+        properties:
+          1:
+            $ref: '#/definitions/LineItem'
+          2:
+            $ref: '#/definitions/LineItem'
+          3:
+            $ref: '#/definitions/LineItem'
+          4:
+            $ref: '#/definitions/LineItem'
+  IssueSummary:
+    type: object
+    properties:
+      prescriptionStatus:
+        $ref: '#/definitions/PrescriptionStatus'
+      lineItems:
+        type: object
+        properties:
+          1:
+            $ref: '#/definitions/LineItem'
+          2:
+            $ref: '#/definitions/LineItem'
+          3:
+            $ref: '#/definitions/LineItem'
+          4:
+            $ref: '#/definitions/LineItem'
+  Organisation:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Organisation name
+        example: EveryDay Surgery
+      address:
+        type: string
+        description: Organisation address. Address lines and postcode are separated by commas and include blank lines
+        example: "Beacon Lane, Harlow, Essex, HP6 1TT"
+      phone:
+        type: string
+        description: Phone number. Not including scheme ('tel:'')
+        example: 01234567999
+      ods:
+        type: string
+        description: ODS code of the organisation
+        example: M12345
