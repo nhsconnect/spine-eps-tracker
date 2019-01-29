@@ -46,6 +46,7 @@ In addition, the external system may also provide the following optional paramet
 ```http
 GET https://[spine_host]/mm/prescriptionsWithDetail?nhsNumber={nhsNumber}&format=trace-summary&earliestDate={earliestDate}&latestDate={latestDate}&prescriptionStatus={prescriptionStatus}&prescriptionVersion={prescriptionVersion}&version={version}
 ```
+> Host details for all Spine environments can be retrieved from [Spine Assurance Portal](http://www.assurancesupport.digital.nhs.uk)
 #### Request Headers ####
 
 Consumers SHALL include the following additional HTTP request headers:

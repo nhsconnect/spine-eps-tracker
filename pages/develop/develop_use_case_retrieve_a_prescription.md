@@ -37,10 +37,9 @@ To retrieve a particular prescription the external system will make an HTTP requ
 #### Absolute Request ####
 
 ```http
-GET https://[eps_tracker_server]/mm/prescriptions/{prescriptionId}?format=trace&version={version}&issueNumber{issueNumber}
+GET https://[spine_host]/mm/prescriptions/{prescriptionId}?format=trace&version={version}&issueNumber{issueNumber}
 ```
-
-> [eps_tracker_server] = mm-sync.national.ncrs.nhs.uk
+> Host details for all Spine environments can be retrieved from [Spine Assurance Portal](http://www.assurancesupport.digital.nhs.uk)
 
 #### Request Headers ####
 

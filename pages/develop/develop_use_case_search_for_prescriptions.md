@@ -46,10 +46,10 @@ In addition, the external system may also provide the following optional paramet
 #### Absolute Request ####
 
 ```http
-GET https://[eps_tracker_server]/mm/prescriptions?nhsNumber={nhsNumber}&format=trace-summary&earliestDate={earliestDate}&latestDate={latestDate}&prescriptionStatus={prescriptionStatus}&prescriptionVersion={prescriptionVersion}&version={version}
+GET https://[spine_host]/mm/prescriptions?nhsNumber={nhsNumber}&format=trace-summary&earliestDate={earliestDate}&latestDate={latestDate}&prescriptionStatus={prescriptionStatus}&prescriptionVersion={prescriptionVersion}&version={version}
 ```
 
-> [eps_tracker_server] = mm-sync.national.ncrs.nhs.uk
+> Host details for all Spine environments can be retrieved from [Spine Assurance Portal](http://www.assurancesupport.digital.nhs.uk)
 
 #### Request Headers ####
 
