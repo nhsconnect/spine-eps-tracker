@@ -9,24 +9,36 @@
 
 <script>
 
-window.onload = function() {
+  window.onload = function() {
 
-  // Build a system
-  const ui = SwaggerUIBundle({
-    url: "{{page.swagger}}",
-    dom_id: '#content',
-    defaultModelsExpandDepth: -1,
-    docExpansion: "full",
-    deepLinking: true,
-    presets: [
-      SwaggerUIBundle.presets.apis
-    ],
-    plugins: [
-      SwaggerUIBundle.plugins.DownloadUrl
-    ]
-  })
+    const DisableTryItOutPlugin = function() {
+      return {
+        statePlugins: {
+          spec: {
+            wrapSelectors: {
+              allowTryItOutFor: () => () => false
+            }
+          }
+        }
+      }
+    }
+    // Build a system
+    const ui = SwaggerUIBundle({
+      url: "{{page.swagger}}",
+      dom_id: '#content',
+      defaultModelsExpandDepth: -1,
+      docExpansion: "full",
+      deepLinking: true,
+      presets: [
+        SwaggerUIBundle.presets.apis
+      ],
+      plugins: [
+        SwaggerUIBundle.plugins.DownloadUrl,
+        DisableTryItOutPlugin
+      ]
+    })
 
-  window.ui = ui
-}
+    window.ui = ui
+  }
 
 </script>
