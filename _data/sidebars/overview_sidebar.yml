@@ -12,9 +12,6 @@ entries:
       url: /index.html
       output: web, pdf
       type: homepage
-    - title: Workshops
-      url: /overview_workshops.html
-      output: web
     - title: Glossary
       url: /overview_glossary.html
       output: web
