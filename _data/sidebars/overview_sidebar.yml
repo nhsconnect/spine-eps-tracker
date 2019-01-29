@@ -45,7 +45,7 @@ entries:
       url: /develop_use_case_search_for_prescriptions_with_detail.html
       output: web
     - title: Retrieve detailed prescription information
-      url: /develop_use_case_retrieve_a_prescription_with_detail.html
+      url: /develop_use_case_view_prescription_with_detail.html
       output: web
 #  - title: Capabilities
 #    output: web
