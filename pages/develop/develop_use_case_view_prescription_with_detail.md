@@ -9,8 +9,8 @@ summary: Search for prescriptions
 
 ## API Use Case ##
 
-As a clinician I would like to view a prescriptions for a patient who has presented to me
- so that I can
+As a clinician I would like to view a prescription for a patient who has presented to me
+so that I can base referral and prescribing information on the specific state of a prescription.
 
 ## Security ##
 
@@ -48,7 +48,7 @@ In addition, the external system may also provide the following optional paramet
 #### Absolute Request ####
 
 ```http
-GET https://[eps_tracker_server]/mm/prescriptionsWithDetail?nhsNumber={nhsNumber}&format=trace-summary&earliestDate={earliestDate}&latestDate={latestDate}&prescriptionStatus={prescriptionStatus}&prescriptionVersion={prescriptionVersion}&version={version}
+GET https://[eps_tracker_server]/mm/nhs111itemdetail?nhsNumber={nhsNumber}&format=trace-summary&earliestDate={earliestDate}&latestDate={latestDate}&prescriptionStatus={prescriptionStatus}&prescriptionVersion={prescriptionVersion}&version={version}
 ```
 #### Request Headers ####
 
@@ -76,7 +76,7 @@ The incoming headers are validated to ensure the correct type and length of para
 | `Spine-RoleProfileId` | Y | 12 | 12 digits | N |
 | `Eps-TraceId` | N | Max 30 | Up to 30 characters (upper or lower case), digits or the – (dash) | N |
 
-> The Spine Interaction Id for this operation is `ExternalPrescriptionSearch_1_0`.
+> The Spine Interaction Id for this operation is `urn:nhs:names:services:mmquery:NHS111_ItemDetail`.
 
 #### Payload Request Parameters ####
 
@@ -92,6 +92,9 @@ The parameter names are as follows, note that these are case sensitive:
 | `prescriptionStatus`  | parameter | N | Must be a valid (four digit) prescription state<sup>2</sup> | Y |
 | `prescriptionVersion` | parameter | N | Must be ‘1’, ‘2’, ‘R1’ or ‘R2’ | Y |
 | `version`             | parameter | N | Must be either the previous or current version of the service | N |
+
+
+
 
 ##### Prescription State #####
 
@@ -222,7 +225,7 @@ Provider systems:
 }
 ```
 
-*Successful search with multiple prescription found*
+*Successful search with multiple prescriptions found*
 
 ```json
 {

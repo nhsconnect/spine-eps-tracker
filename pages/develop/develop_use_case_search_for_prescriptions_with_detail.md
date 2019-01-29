@@ -4,10 +4,9 @@ keywords: develop
 tags: [develop]
 sidebar: overview_sidebar
 permalink: develop_use_case_search_for_prescriptions_with_detail.html
-summary: Search for prescriptions
 ---
 
-## API User Story ##
+## User Story ##
 
 As a clinician delivering urgent care I would like to search for prescriptions for a patient who has presented to me so that I can get an overview of a patient's medication regime and find to correct prescription for me to review.
 
@@ -23,7 +22,7 @@ As a clinician delivering urgent care I would like to search for prescriptions f
 To search for a list of prescriptions the external system will make an HTTP request which must include, as a minimum, the following parameters:
 
 - NHS Number
-- Format (this is a fixed value of ‘trace-summary’. Introduced for forwards compatibility)
+- Format (this is a fixed value of `trace-summary`. Introduced for forwards compatibility)
 
 In addition, the external system may also provide the following optional parameters:
 
@@ -38,8 +37,6 @@ In addition, the external system may also provide the following optional paramet
   - If both `earliestDate` and `latestDate` are supplied and `latestDate` is earlier than `earliestDate` no prescriptions will be found.
 2. message version indicates the version of the message response and is not used as part of the search.
 
-{% include note.html content="The additional “version” parameter which is not required in this release." %}
-
 ## API Usage ##
 
 ### Request Operation ###
@@ -47,7 +44,7 @@ In addition, the external system may also provide the following optional paramet
 #### Absolute Request ####
 
 ```http
-GET https://[eps_tracker_server]/mm/prescriptionsWithDetail?nhsNumber={nhsNumber}&format=trace-summary&earliestDate={earliestDate}&latestDate={latestDate}&prescriptionStatus={prescriptionStatus}&prescriptionVersion={prescriptionVersion}&version={version}
+GET https://[spine_host]/mm/prescriptionsWithDetail?nhsNumber={nhsNumber}&format=trace-summary&earliestDate={earliestDate}&latestDate={latestDate}&prescriptionStatus={prescriptionStatus}&prescriptionVersion={prescriptionVersion}&version={version}
 ```
 #### Request Headers ####
 
@@ -75,7 +72,7 @@ The incoming headers are validated to ensure the correct type and length of para
 | `Spine-RoleProfileId` | Y | 12 | 12 digits | N |
 | `Eps-TraceId` | N | Max 30 | Up to 30 characters (upper or lower case), digits or the – (dash) | N |
 
-> The Spine Interaction Id for this operation is `ExternalPrescriptionDetailSearch_1_0`.
+> The Spine Interaction Id for this operation is `urn:nhs:names:services:mmquery:NHS111_ItemSummary`.
 
 #### Payload Request Parameters ####
 
@@ -131,7 +128,7 @@ For example:
 
 ### Request Response ###
 
-The output is a proprietary JSON format, the content type is 'application/json'and elements will appear in no particular order.
+The output is a proprietary JSON format, the content type is 'application/json' and elements will appear in no particular order.
 
 The HTTP status will, under most circumstances be 200. If the query is successful the statusCode will be '0' or '' and the reason will be '' (empty string).
 
@@ -212,3 +209,4 @@ Provider systems:
     }
   }
 }
+```
