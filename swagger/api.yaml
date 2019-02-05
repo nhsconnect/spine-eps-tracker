@@ -489,27 +489,27 @@ definitions:
         example: To Be Dispensed
       prescriptionDownloadDate:
         type: string
-        description: Datetime in UTC of most recent prescription download event. Format is HL7 - `YYYYMMDDHHMMSS`
+        description: Datetime in UTC of most recent prescription download event. Format is HL7 - `YYYYMMDDHHMMSS` or `False` or empty string where not present
         example: 20180903120000
       prescriptionDispensedDate:
         type: string
-        description: Datetime in UTC of most recent dispensing event, which includes withdraws, updates and dispense history rebuilds. Format is HL7 - `YYYYMMDDHHMMSS`
+        description: Datetime in UTC of most recent dispensing event, which includes withdraws, updates and dispense history rebuilds. Format is HL7 - `YYYYMMDDHHMMSS` or `False` or empty string where not present
         example: 20180903120000
       prescriptionClaimedDate:
         type: string
-        description: Datetime in UTC of most recent claim event, which includes claim updates. Format is HL7 - `YYYYMMDDHHMMSS`
+        description: Datetime in UTC of most recent claim event, which includes claim updates. Format is HL7 - `YYYYMMDDHHMMSS` or `False` or empty string where not present
         example: 20180903120000
       prescriptionLastIssueDispensedDate:
         type: string
-        description: Datetime in UTC of dispense of the previous issue of a repeat dispensing prescription. For repeat dispensing prescriptions, only where the current issue is not the first issue. Format is HL7 - `YYYYMMDDHHMMSS`
+        description: Datetime in UTC of dispense of the previous issue of a repeat dispensing prescription. For repeat dispensing prescriptions, only where the current issue is not the first issue. Format is HL7 - `YYYYMMDDHHMMSS` or `False` or empty string where not present
         example: 20180903120000
       effectiveDate:
         type: string
-        description: Clinically effective date(time), which may be in the future for post-dated prescriptions. Format is HL7 - YYYYMMDDHHMMSS
+        description: Clinically effective date(time), which may be in the future for post-dated prescriptions. Format is HL7 - YYYYMMDDHHMMSS. Will be present in all cases.
         example: 20180903120000
       lastEventDate:
         type: string
-        description: Datetime in UTC of most recent event. Events include dispensing, claiming, nomination changes, cancellation attempts and repeat dispensing issues becoming due. Format is HL7 - `YYYYMMDDHHMMSS`
+        description: Datetime in UTC of most recent event. Events include dispensing, claiming, nomination changes, cancellation attempts and repeat dispensing issues becoming due. Format is HL7 - `YYYYMMDDHHMMSS`. Will be present in all cases.
         example: 20180903
       prescriptionTreatmentType:
         type: object
@@ -520,9 +520,10 @@ definitions:
         type: string
         enum: ['R1','R2']
       pendingCancellations:
-        type: boolean
+        type: string
+        enum: ['True','False']
         description: True where a cancellation has been received for the prescription or an item but has not been able to be applied.
-        example: false
+        example: False
       lineItems:
         description: a Map of line item ID (GUID) to medication
         type: object
@@ -600,16 +601,12 @@ definitions:
       quantity:
         type: number
         format: float
-        description: Medication quantity.Numeric but may include a decimal, e.g. “12.5”
+        description: Medication quantity. Numeric but may include a decimal, e.g. “12.5”
         example: 12.5
       uom:
         type: string
         description: Quantity unit of measure description
         example: ml
-      uomcode:
-        type: string
-        description: Concept ID for unit of measure.
-        example: 0000322238
       dosage:
         type: string
         description: Dosage instruction
@@ -639,11 +636,11 @@ definitions:
         example: false
       lastDispenseDate:
         type: string
-        description: Date of the most recent dispensing event for this item. HL7 format - YYYYMMDD
+        description: Date of the most recent dispensing event for this item. HL7 format - YYYYMMDD.  `False` or empty string where not present.
         example: 20180903
       dispensingOrganisationContact:
         type: string
-        description: Phone number of dispensing organisation, not including scheme
+        description: Phone number of dispensing organisation, not including scheme ('tel:'). Empty string where not present.
         example: 01674463732
       issueNumber:
         type: number
@@ -691,7 +688,7 @@ definitions:
         example: "Beacon Lane, Harlow, Essex, HP6 1TT"
       phone:
         type: string
-        description: Phone number. Not including scheme ('tel:'')
+        description: Phone number, not including scheme ('tel:'). Empty string where not present.
         example: 01234567999
       ods:
         type: string
