@@ -318,12 +318,8 @@ definitions:
     allOf:
       - $ref: '#/definitions/Response'
       - type: object
-        properties:
-          prescriptions:
-            type: object
-            description: a Map of prescription ID to prescription
-            additionalProperties:
-              $ref: '#/definitions/111PrescriptionDetail'
+    additionalProperties:
+      $ref: '#/definitions/111PrescriptionDetail'
   Prescription:
     type: object
     properties:
