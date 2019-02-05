@@ -212,6 +212,13 @@ paths:
       tags:
         - Clinical Detail
       parameters:
+        - name: Accept
+          in: header
+          description: Format for response - only json supported
+          required: true
+          type: string
+          enum:
+          - application/json
         - name: Spine-From-Asid
           in: header
           description: Accredited System ID for the requesting system
@@ -231,12 +238,6 @@ paths:
           name: Eps-TraceId
           description: Consumer's TraceID (i.e. GUID/UUID). This is reflected back in the response allowing queries to be traced throughout the system
           type: string
-        - name: nhsNumber
-          in: query
-          type: string
-          description: |
-            Patient NHS number, which must have been traced and verified.
-          required: true
         - name: prescriptionId
           in: query
           type: string
