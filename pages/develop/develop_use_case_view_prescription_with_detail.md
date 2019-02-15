@@ -14,40 +14,39 @@ so that I can base referral and prescribing information on the specific state of
 ## Security ##
 
 - Consumers and Producers SHALL utilise TLS Mutual Authentication (TLS-MA).
-- Producers SHALL verify that the requestor's entry on Spine Directory Service is registered to use the prescription detail interaction.
+- Producers SHALL verify that the requesting system's entry on Spine Directory Service is registered to use the interaction.
 
 ## Prerequisites ##
 
-### Consumer ###
+### Endpoint Authentication ###
+The Spine Interaction Id for this operation is `urn:nhs:names:services:mmquery:NHS111_ItemDetail` - endpoints must be registered to use this interaction.
 
-To search for a list of prescriptions the external system will make an HTTP request which must include, as a minimum, the following parameters:
+### User Authentication ###
+Users must be authenticated using Spine Security Broker, and provide user details in the request header.
 
-- NHS Number
-- Format (this is a fixed value of ‘trace-summary’. Introduced for forwards compatibility)
+### Prescription Information ###
+To view the detail of a prescription the requesting system will make an HTTP request which must include, as a minimum, the following parameters:
 
-In addition, the external system may also provide the following optional parameters:
+- Prescription ID
+- Requesting User Details
+- Requesting System details
 
-- Prescription effective date range (earliest and latest date)<sup>1</sup>
-- Prescription status
-- Prescription Version
-- Message version<sup>2</sup>
+Optionally Requests can include:
+- Line Item ID
+- Prescription Issue Number
 
-1. If `earliestDate` is not supplied it will default to 28 days ago. Note that this means that if no earliest date is supplied and the latest date is more than 28 days ago the earliest date will be after the latest date and no prescriptions will be found.
-  - If `latestDate` is supplied it will include all of that date i.e. up until midnight of that date.
-  - If `latestDate` is not supplied it will default to the current date/time.
-  - If both `earliestDate` and `latestDate` are supplied and `latestDate` is earlier than `earliestDate` no prescriptions will be found.
-2. message version indicates the version of the message response and is not used as part of the search.
-
-{% include note.html content="The additional “version” parameter which is not required in this release." %}
+This information is likely to have been obtained from the results of a previous prescription search.
 
 ## API Usage ##
 
-### Request Operation ###
+### Request ###
 
 #### Absolute Request ####
 
-```http
-GET https://[spine_host]/mm/nhs111itemdetail?nhsNumber={nhsNumber}&format=trace-summary&earliestDate={earliestDate}&latestDate={latestDate}&prescriptionStatus={prescriptionStatus}&prescriptionVersion={prescriptionVersion}&version={version}
+To search for prescription ID 5B507C-Y90206-061F9E:
+
+```bash
+curl --cacert certs/cacerts --cert certs/int-eps.crt.pem --key keys/int-eps.key.pem --header 'Spine-From-Asid: 200000000946' --header 'Spine-UserId: 313175813564' --header 'Spine-RoleProfileId: 562926913100' --header 'Accept: application/json' https://msg.int.spine2.ncrs.nhs.uk/mm/nhs111itemdetails?prescriptionId=5B507C-Y90206-061F9E
 ```
 > Host details for all Spine environments can be retrieved from [Spine Assurance Portal](http://www.assurancesupport.digital.nhs.uk)
 
@@ -77,44 +76,20 @@ The incoming headers are validated to ensure the correct type and length of para
 | `Spine-RoleProfileId` | Y | 12 | 12 digits | N |
 | `Eps-TraceId` | N | Max 30 | Up to 30 characters (upper or lower case), digits or the – (dash) | N |
 
-> The Spine Interaction Id for this operation is `urn:nhs:names:services:mmquery:NHS111_ItemDetail`.
+#### Request Parameters ####
 
-#### Payload Request Parameters ####
-
-The incoming parameters are validated to ensure the correct length of parameters and allowable characters.
+The incoming parameters are validated to ensure the correct format.
 
 The parameter names are as follows, note that these are case sensitive:
 
-| Parameter | Type | Mandatory | Length / Restrictions | Used in search |
-|-----------|------|-----------|-----------------------|----------------|
-| `nhsNumber`           | parameter | Y | 10 | Y |
-| `earliestDate`        | parameter | N | Must have the form yyyymmdd. If both earliest and latest date are supplied the earliest date cannot be later than the latest date | Y |
-| `latestDate`          | parameter | N | Must have the form yyyymmdd | Y |
-| `prescriptionStatus`  | parameter | N | Must be a valid (four digit) prescription state<sup>2</sup> | Y |
-| `prescriptionVersion` | parameter | N | Must be ‘1’, ‘2’, ‘R1’ or ‘R2’ | Y |
-| `version`             | parameter | N | Must be either the previous or current version of the service | N |
+| Parameter         | Type            | Mandatory | Length / Restrictions |
+|-------------------|-----------------|-----------|-----------------------|
+| `prescriptionId`  | query parameter | Y         | Must be a valid EPS R1 or R2 prescription ID, including checkdigit |
+| `lineitemid`      | query parameter | N         | Uppercase UUID |
+| `issueNumber`     | query parameter | N         | Integer - 1 based |
 
 
-
-
-##### Prescription State #####
-
-```code
-    AWAITING_RELEASE_READY = '0000'
-    TO_BE_DISPENSED = '0001'
-    WITH_DISPENSER = '0002'
-    WITH_DISPENSER_ACTIVE = '0003'
-    EXPIRED = '0004'
-    CANCELLED = '0005'
-    DISPENSED = '0006'
-    NOT_DISPENSED = '0007'
-    CLAIMED = '0008'
-    NO_CLAIMED = '0009'
-    REPEAT_DISPENSE_FUTURE_INSTANCE = '9000'
-    FUTURE_DATED_PRESCRIPTION = '9001'
-    PENDING_CANCELLATION = '9005'
-```
-
+### Responses ###
 #### Error Handling ####
 
 If the query is unsuccessful the statusCode not be '0' and the reason will be populated.
