@@ -450,9 +450,9 @@ definitions:
         type: string
         enum: ['R1','R2']
       pendingCancellations:
-        type: boolean
-        description: True where a cancellation has been received for the prescription or an item but has not been able to be applied.
-        example: false
+        type: String
+        description: "True" where a cancellation has been received for the prescription or an item but has not been able to be applied.
+        example: "False"
       lineItems:
         description: a Map of line item ID (GUID) to medication
         type: object
