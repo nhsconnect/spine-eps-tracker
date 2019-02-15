@@ -423,7 +423,7 @@ definitions:
       prescriptionTreatmentType:
         type: object
         $ref: '#/definitions/PrescriptionTreatmentTypeDescription'
-      effectiveDate:
+      prescriptionIssueDate:
         type: string
         description: Clinically effective date(time), which may be in the future for post-dated prescriptions. Format is HL7 - YYYYMMDDHHMMSS
         example: 20180903113008
