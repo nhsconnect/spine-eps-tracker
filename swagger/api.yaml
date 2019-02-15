@@ -416,7 +416,7 @@ definitions:
         type: string
         description: NHS Number.
         example: 9232524433
-      status:
+      prescriptionStatus:
         type: string
         description: Prescription Status
         example: To Be Dispensed
