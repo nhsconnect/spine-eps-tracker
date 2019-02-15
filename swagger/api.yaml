@@ -399,7 +399,7 @@ definitions:
       currentIssueNumber:
         type: number
         format: integer
-        description: Issue number of the prescription. Set to 1 in the case of repeat dispensing prescriptions.
+        description: Issue number of the prescription. Set to 1 in the case of acute prescriptions.
         example: 1
       lastEventDate:
         type: string
