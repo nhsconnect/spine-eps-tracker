@@ -134,11 +134,9 @@ For example:
 }
 ```
 
-### Request Response ###
+The output is a proprietary JSON format, the content type is "application/json" and elements will appear in no particular order.
 
-The output is a proprietary JSON format, the content type is 'application/json'and elements will appear in no particular order.
-
-The HTTP status will, under most circumstances be 200. If the query is successful the statusCode will be '0' and the reason will be '' (empty string).
+The HTTP status will, under most circumstances be 200. If the query is successful the statusCode will be "0" and the reason will be "" (empty string).
 
 #### Response Headers ####
 
