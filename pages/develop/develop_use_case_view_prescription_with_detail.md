@@ -203,214 +203,77 @@ Provider systems:
 
 ```json
 {
-  "reason": "",
-  "version": "1",
-  " prescriptionList ": {
-    "D29E5B-Z5C475-11E6AR": {
-      "prescriptionTreatmentType": {
-        "prescriptionTreatmentTypeText": "Repeat Prescribing",
-        "prescriptionTreatmentTypeCode": "0002"
+   "statusCode" : "0",
+   "reason" : "",
+   "version" : "1",
+   "54A9B7-C81007-000014" : {
+      "pendingCancellations" : "False",
+      "prescriptionLastIssueDispensedDate" : "False",
+      "prescriptionDownloadDate" : "20190213150209",
+      "repeatInstance" : {
+         "currentIssue" : "1",
+         "totalAuthorised" : "1"
       },
-      "prescriptionIssueDate": "20150909194211",
-      "pendingCancellations": "False",
-      "lastEventDate": "20150909194214",
-      "currentIssueNumber": "1",
-      "issues": {
-        "1": {
-          "issueDate": "20150909",
-          "lineItems": {
-            "1": {
-              "status": {
-                "statusText": "Item with dispenser",
-                "statusCode": "0008"
-              }
-            },
-            "2": {
-              "status": {
-                "statusText": "Item with dispenser",
-                "statusCode": "0008"
-              }
-            }
-          },
-          "prescriptionStatus": {
-            "statusText": "With Dispenser",
-            "statusCode": "0002"
-          }
-        }
+      "prescriptionDispensedDate" : "20190215",
+      "prescriptionTreatmentType" : "Repeat Prescribing",
+      "lastEventDate" : "20190215105008",
+      "prescriptionClaimedDate" : "20190215105008",
+      "lineItems" : {
+         "754B10D1-04DA-3828-E050-D20AE3A22BBD" : {
+            "code" : "193611000001107",
+            "quantity" : "84",
+            "itemStatus" : "Not Dispensed",
+            "dosage" : "As Directed",
+            "description" : "Micronor 350microgram tablets (Janssen-Cilag Ltd)",
+            "uom" : "tablet"
+         },
+         "754B10D1-04E9-3828-E050-D20AE3A22BBD" : {
+            "code" : "330987003",
+            "dosage" : "As Directed",
+            "quantity" : "10",
+            "itemStatus" : "Dispensed",
+            "description" : "Sodium bicarbonate 5% ear drops",
+            "uom" : "ml"
+         },
+         "754B10D1-04E4-3828-E050-D20AE3A22BBD" : {
+            "quantity" : "250",
+            "itemStatus" : "Dispensed",
+            "dosage" : "As Directed",
+            "code" : "159411000001102",
+            "uom" : "ml",
+            "description" : "Oilatum Emollient (GlaxoSmithKline Consumer Healthcare)"
+         },
+         "754B10D1-04DF-3828-E050-D20AE3A22BBD" : {
+            "dosage" : "Inject subcutaneously as directed",
+            "quantity" : "4",
+            "itemStatus" : "Dispensed",
+            "code" : "28426011000001108",
+            "uom" : "pre-filled disposable injection",
+            "description" : "Bydureon 2mg powder and solvent for prolonged-release suspension for injecti                                                               on pre-filled pen (AstraZeneca UK Ltd)"
+         }
       },
-      "patientNhsNumber": "9990406480"
-    },
-    "D2A223-Z2C475-11E6AQ": {
-      "prescriptionTreatmentType": {
-        "prescriptionTreatmentTypeText": "Repeat Prescribing",
-        "prescriptionTreatmentTypeCode": "0002"
+      "nominatedPharmacy" : {
+         "ods" : "",
+         "name" : "",
+         "address" : "",
+         "phone" : ""
       },
-      "prescriptionIssueDate": "20150909194211",
-      "pendingCancellations": "False",
-      "lastEventDate": "20150909194214",
-      "currentIssueNumber": "1",
-      "issues": {
-        "1": {
-          "issueDate": "20150909",
-          "lineItems": {
-            "1": {
-              "status": {
-                "statusText": "Item with dispenser",
-                "statusCode": "0008"
-              }
-            },
-            "2": {
-              "status": {
-                "statusText": "Item with dispenser",
-                "statusCode": "0008"
-              }
-            }
-          },
-          "prescriptionStatus": {
-            "statusText": "With Dispenser",
-            "statusCode": "0002"
-          }
-        }
+      "patientNhsNumber" : "9651614498",
+      "prescriber" : {
+         "ods" : "C81007",
+         "name" : "VERNON STREET MEDICAL CTR",
+         "address" : "13 VERNON STREET, DERBY, DERBYSHIRE, DE1 1FW",
+         "phone" : "01512631737"
       },
-      "patientNhsNumber": "9990406480"
-    },
-    "D2A238-Z9E475-11E6AE": {
-      "prescriptionTreatmentType": {
-        "prescriptionTreatmentTypeText": "Repeat Prescribing",
-        "prescriptionTreatmentTypeCode": "0002"
-      },
-      "prescriptionIssueDate": "20150909194211",
-      "pendingCancellations": "False",
-      "lastEventDate": "20150909194214",
-      "currentIssueNumber": "1",
-      "issues": {
-        "1": {
-          "issueDate": "20150909",
-          "lineItems": {
-            "1": {
-              "status": {
-                "statusText": "Item with dispenser",
-                "statusCode": "0008"
-              }
-            },
-            "2": {
-              "status": {
-                "statusText": "Item with dispenser",
-                "statusCode": "0008"
-              }
-            }
-          },
-          "prescriptionStatus": {
-            "statusText": "With Dispenser",
-            "statusCode": "0002"
-          }
-        }
-      },
-      "patientNhsNumber": "9990406480"
-    },
-    "D2A080EE-475C-11E6-A68F-08002732570CN": {
-      "prescriptionTreatmentType": {
-        "prescriptionTreatmentTypeText": "Repeat Prescribing",
-        "prescriptionTreatmentTypeCode": "0002"
-      },
-      "prescriptionIssueDate": "20150909194211",
-      "pendingCancellations": "False",
-      "lastEventDate": "20150909194214",
-      "currentIssueNumber": "1",
-      "issues": {
-        "1": {
-          "issueDate": "20150909",
-          "lineItems": {
-            "1": {
-              "status": {
-                "statusText": "Item with dispenser",
-                "statusCode": "0008"
-              }
-            },
-            "2": {
-              "status": {
-                "statusText": "Item with dispenser",
-                "statusCode": "0008"
-              }
-            }
-          },
-          "prescriptionStatus": {
-            "statusText": "With Dispenser",
-            "statusCode": "0002"
-          }
-        }
-      },
-      "patientNhsNumber": "9990406480"
-    },
-    "D2A22A-Z70475-11E6AH": {
-      "prescriptionTreatmentType": {
-        "prescriptionTreatmentTypeText": "Repeat Prescribing",
-        "prescriptionTreatmentTypeCode": "0002"
-      },
-      "prescriptionIssueDate": "20150909194211",
-      "pendingCancellations": "False",
-      "lastEventDate": "20150909194214",
-      "currentIssueNumber": "1",
-      "issues": {
-        "1": {
-          "issueDate": "20150909",
-          "lineItems": {
-            "1": {
-              "status": {
-                "statusText": "Item with dispenser",
-                "statusCode": "0008"
-              }
-            },
-            "2": {
-              "status": {
-                "statusText": "Item with dispenser",
-                "statusCode": "0008"
-              }
-            }
-          },
-          "prescriptionStatus": {
-            "statusText": "With Dispenser",
-            "statusCode": "0002"
-          }
-        }
-      },
-      "patientNhsNumber": "9990406480"
-    },
-    "D2A22C50-475C-11E6-A68F-08002732570CN": {
-      "prescriptionTreatmentType": {
-        "prescriptionTreatmentTypeText": "Repeat Prescribing",
-        "prescriptionTreatmentTypeCode": "0002"
-      },
-      "prescriptionIssueDate": "20150909194211",
-      "pendingCancellations": "False",
-      "lastEventDate": "20150909194214",
-      "currentIssueNumber": "1",
-      "issues": {
-        "1": {
-          "issueDate": "20150909",
-          "lineItems": {
-            "1": {
-              "status": {
-                "statusText": "Item with dispenser",
-                "statusCode": "0008"
-              }
-            },
-            "2": {
-              "status": {
-                "statusText": "Item with dispenser",
-                "statusCode": "0008"
-              }
-            }
-          },
-          "prescriptionStatus": {
-            "statusText": "With Dispenser",
-            "statusCode": "0002"
-          }
-        }
-      },
-      "patientNhsNumber": "9990406480"
-    }
-  },
-  "statusCode": "0"
+      "epsVersion" : "R2",
+      "prescriptionIssueDate" : "20180907120900",
+      "prescriptionStatus" : "Claimed",
+      "dispensingPharmacy" : {
+         "address" : "The Pharmacy, The Street, SW8 3QJ",
+         "name" : "Test Pharmacy",
+         "ods" : "FA00D",
+         "phone" : "07775123456"
+      }
+   }
 }
 ```
