@@ -8,7 +8,7 @@ permalink: develop_use_case_search_for_prescriptions_with_detail.html
 
 ## User Story ##
 
-As a clinician delivering urgent care I would like to search for prescriptions for a patient who has presented to me so that I can get an overview of a patient's medication regime and find to correct prescription for me to review.
+As a clinician delivering urgent care I would like to search for prescriptions for a patient who has presented to me so that I can get an overview of a patient's medication regime and find the correct prescription for me to review.
 
 ## Security ##
 
