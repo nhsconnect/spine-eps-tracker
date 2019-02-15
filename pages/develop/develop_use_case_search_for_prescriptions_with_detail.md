@@ -19,34 +19,22 @@ As a clinician delivering urgent care I would like to search for prescriptions f
 
 ### Consumer ###
 
-To search for a list of prescriptions the external system will make an HTTP request which must include, as a minimum, the following parameters:
+To search for a list of prescriptions the external system will make an HTTP request which must include the following parameter:
 
 - NHS Number
-- Format (this is a fixed value of `trace-summary`. Introduced for forwards compatibility)
 
-In addition, the external system may also provide the following optional parameters:
-
-- Prescription effective date range (earliest and latest date)<sup>1</sup>
-- Prescription status
-- Prescription Version
-- Message version<sup>2</sup>
-
-1. If `earliestDate` is not supplied it will default to 28 days ago. Note that this means that if no earliest date is supplied and the latest date is more than 28 days ago the earliest date will be after the latest date and no prescriptions will be found.
-  - If `latestDate` is supplied it will include all of that date i.e. up until midnight of that date.
-  - If `latestDate` is not supplied it will default to the current date/time.
-  - If both `earliestDate` and `latestDate` are supplied and `latestDate` is earlier than `earliestDate` no prescriptions will be found.
-2. message version indicates the version of the message response and is not used as part of the search.
+This must have been traced and verified, so is likely to have been obtained from a PDS trace.
 
 ## API Usage ##
 
-### Request Operation ###
+### Request ###
 
-#### Absolute Request ####
+#### Example Request ####
 
 ```http
 GET https://[spine_host]/mm/nhs111itemsummary?nhsNumber={nhsNumber}&format=trace-summary&earliestDate={earliestDate}&latestDate={latestDate}&prescriptionStatus={prescriptionStatus}&prescriptionVersion={prescriptionVersion}&version={version}
 ```
-> Host details for all Spine environments can be retrieved from [Spine Assurance Portal](http://www.assurancesupport.digital.nhs.uk)
+> Host details for all Spine environments can be retrieved from [Spine Assurance Portal](http://www.assurancesupport.digital.nhs.uk) [NHS network access only]
 
 #### Request Headers ####
 
@@ -72,46 +60,23 @@ The incoming headers are validated to ensure the correct type and length of para
 | `Spine-From-Asid` | Y | 12 | 12 digits | N |
 | `Spine-UserId`    | Y |	12 | 12 digits | N |
 | `Spine-RoleProfileId` | Y | 12 | 12 digits | N |
-| `Eps-TraceId` | N | Max 30 | Up to 30 characters (upper or lower case), digits or the – (dash) | N |
+| `Eps-TraceId` | N | Max 30 | Up to 30 characters (upper or lower case), digits or `-` | N |
 
 > The Spine Interaction Id for this operation is `urn:nhs:names:services:mmquery:NHS111_ItemSummary`.
 
-#### Payload Request Parameters ####
+#### Request Parameters ####
 
 The incoming parameters are validated to ensure the correct length of parameters and allowable characters.
 
 The parameter names are as follows, note that these are case sensitive:
 
-| Parameter | Type | Mandatory | Length / Restrictions | Used in search |
-|-----------|------|-----------|-----------------------|----------------|
-| `nhsNumber`           | parameter | Y | 10 | Y |
-| `earliestDate`        | parameter | N | Must have the form yyyymmdd. If both earliest and latest date are supplied the earliest date cannot be later than the latest date | Y |
-| `latestDate`          | parameter | N | Must have the form yyyymmdd | Y |
-| `prescriptionStatus`  | parameter | N | Must be a valid (four digit) prescription state<sup>2</sup> | Y |
-| `prescriptionVersion` | parameter | N | Must be ‘1’, ‘2’, ‘R1’ or ‘R2’ | Y |
-| `version`             | parameter | N | Must be either the previous or current version of the service | N |
-
-##### Prescription State #####
-
-```code
-    AWAITING_RELEASE_READY = '0000'
-    TO_BE_DISPENSED = '0001'
-    WITH_DISPENSER = '0002'
-    WITH_DISPENSER_ACTIVE = '0003'
-    EXPIRED = '0004'
-    CANCELLED = '0005'
-    DISPENSED = '0006'
-    NOT_DISPENSED = '0007'
-    CLAIMED = '0008'
-    NO_CLAIMED = '0009'
-    REPEAT_DISPENSE_FUTURE_INSTANCE = '9000'
-    FUTURE_DATED_PRESCRIPTION = '9001'
-    PENDING_CANCELLATION = '9005'
-```
+| Parameter | Type              | Mandatory | Length / Restrictions | Used in search |
+|-----------|-------------------|-----------|-----------------------|----------------|
+| `nhsNumber` | query parameter | Y         | 10                    | Y              |
 
 #### Error Handling ####
 
-If the query is unsuccessful the statusCode is > '0' and the reason will be populated.
+In most cases if the query is unsuccessful the statusCode is > 0 and the reason will be populated. If the query was correctly formed but the search returned no results the HTTP status code will be 200 as it will in most most cases where the query was invalid or not allowed. In some cases where the HTTP request is invalid or not supported by the server an HTTP status > 200 may be returned without a json response.
 
 For example:
 
@@ -121,14 +86,12 @@ For example:
 {
   "reason": "Invalid or missing NHS number",
   "version": "1",
-  "prescriptions": {
-
-  },
+  "prescriptions": {},
   "statusCode": "61"
 }
 ```
 
-### Request Response ###
+### Response ###
 
 The output is a proprietary JSON format, the content type is 'application/json' and elements will appear in no particular order.
 
@@ -140,75 +103,74 @@ No special response headers are utilised.
 
 #### Response Body ####
 
-| Data Item | Description | Notes |
-| patientNhsNumber | Patient NHS Number | - |
-| Prescription ID | Unique Prescription ID | Same for each item on a Prescription
-| lineItem ID | Prescription Item ID | UUID |
-| repeatInstance |  - |  - |
-| - currentIssue | The current issue number | 1 for acute prescriptions |
-| - totalAuthorised | The total authorised number of repeats | 1 for acute prescriptions |
-| Medication Name | Medication description | Medication name, strength and form as per dm+d concept definition |
-| prescriptionStatus | Current status of the Prescription (or Instance) |  - |
+| Data Item           | Description                       | Notes |
+| ------------------- | --------------------------------- | ----- |
+| Prescription ID     | Unique Prescription ID            | Same for each item on a Prescription |
+| patientNhsNumber    | Patient NHS Number                | 10 digits |
+| prescriptionStatus  | Current status of the prescription (or issue) | Description - not coded |
+| prescriptionTreatmentType | Type of prescription - Acute / Repeat Dispensing / Repeat Prescribing | Description - not coded |
 | prescriptionIssueDate | Effective date of the prescription, which may be future dated |  - |
-| lastEventDate | Date of latest activity on the prescription | - |
-| prescriptionTreatmentType | Type of the Prescription | e.g. Acute, Repeat Dispensing, Repeat Prescription | - |
-| epsVersion | Version of the electronic prescription | e.g. R1, R2 |
-| pendingCancellations | If true, indicates a pending cancellation flag applies to the prescription | Boolean |
+| repeatInstance      |  -                                | - |
+| - currentIssue      | The current issue number          | 1 for acute prescriptions |
+| - totalAuthorised   | The total authorised number of repeats | 1 for acute prescriptions |
+| lastEventDate       | Date of latest activity on the prescription | - |
+| epsVersion          | Version of the electronic prescription | e.g. R1, R2 |
+| pendingCancellations | If true, indicates a pending cancellation flag applies to the prescription | String *not* boolean |
+| Line Item ID         | Prescription Item ID              | UUID |
+| Medication Name     | Medication description            | Medication name, strength and form as per dm+d concept definition |
 
+#### Example Responses ####
 
-#### Payload Response Body ####
-
-Provider systems:
-
-- SHALL return a `200` **OK** HTTP status code on successful execution of the operation.
-
+*Prescription not found*
 ```json
-{
- 	"reason": "",
- 	 "version": "1.0",
-  	"prescriptionList: { .......}
-    	 "statusCode": "0"
-}
+
 ```
-
-*Successful search with a single prescription found*
+*Prescription detail successfully found*
 
 ```json
 {
-  "version": "1",
-  "reason": "",
-  "statusCode": "0",
-  "prescriptions": {
-    "2D35F7-ZA0448-11E88Z": {
-      "lastEventDate": "20180422095703",
-      "prescriptionIssueDate": "20180117095703",
-      "patientNhsNumber": "9912003489",
-      "epsVersion": "R2",
-      "repeatInstance": {
-        "“currentIssue”": "2",
-        "“totalAuthorised”": "“6”"
+   "statusCode" : "0",
+   "reason" : "",
+   "prescriptions" : {
+      "611843-C81007-00001F" : {
+         "prescriptionIssueDate" : "20181031121000",
+         "prescriptionTreatmentType" : "Repeat Prescribing",
+         "prescriptionStatus" : "Claimed",
+         "pendingCancellations" : "False",
+         "repeatInstance" : {
+            "totalAuthorised" : "1",
+            "currentIssue" : "1"
+         },
+         "lastEventDate" : "20190121163722",
+         "patientNhsNumber" : "9651614498",
+         "lineItems" : {
+            "7983C385-B882-E99C-E050-D20AE3A22DF1" : "Sodium bicarbonate 5% ear drops",
+            "7983C385-B87D-E99C-E050-D20AE3A22DF1" : "Oilatum Emollient (GlaxoSmithKline Consumer Healthcare)",
+            "7983C385-B878-E99C-E050-D20AE3A22DF1" : "Bydureon 2mg powder and solvent for prolonged-release suspension for injection pre-filled pen (AstraZeneca UK Ltd)",
+            "7983C385-B873-E99C-E050-D20AE3A22DF1" : "Micronor 350microgram tablets (Janssen-Cilag Ltd)"
+         },
+         "epsVersion" : "R2"
       },
-      "pendingCancellations": "False",
-      "prescriptionTreatmentType": "Repeat Dispensing",
-      "prescriptionStatus": "Dispensed",
-      "lineItems": {
-        "30b7e9cf-6f42-40a8-84c1-e61ef638eee2": "Perindopril erbumine 2mg tablets",
-        "636f1b57-e18c-4f45-acae-2d7db86b6e1e": "Metformin 500mg modified-release tablets"
+      "54A9B7-C81007-000014" : {
+         "prescriptionTreatmentType" : "Repeat Prescribing",
+         "prescriptionIssueDate" : "20180907120900",
+         "epsVersion" : "R2",
+         "lineItems" : {
+            "754B10D1-04E9-3828-E050-D20AE3A22BBD" : "Sodium bicarbonate 5% ear drops",
+            "754B10D1-04DA-3828-E050-D20AE3A22BBD" : "Micronor 350microgram tablets (Janssen-Cilag Ltd)",
+            "754B10D1-04E4-3828-E050-D20AE3A22BBD" : "Oilatum Emollient (GlaxoSmithKline Consumer Healthcare)",
+            "754B10D1-04DF-3828-E050-D20AE3A22BBD" : "Bydureon 2mg powder and solvent for prolonged-release suspension for injection pre-filled pen (AstraZeneca UK Ltd)"
+         },
+         "patientNhsNumber" : "9651614498",
+         "repeatInstance" : {
+            "currentIssue" : "1",
+            "totalAuthorised" : "1"
+         },
+         "lastEventDate" : "20190215105008",
+         "prescriptionStatus" : "Claimed",
+         "pendingCancellations" : "False"
       }
-    },
-    "ABC5F7-ZA0448-77E88X": {
-      "lastEventDate": "20180319115010",
-      "prescriptionIssueDate": "20180319101307",
-      "patientNhsNumber": "9912003489",
-      "epsVersion": "R2",
-      "currentIssueNumber": "1",
-      "pendingCancellations": "False",
-      "prescriptionTreatmentType": "Acute Prescribing",
-      "prescriptionStatus": "Dispensed",
-      "lineItems": {
-        "636f1b57-e18c-4f45-acae-2d7db86b6e1e": "Hydrocortisone 0.5% cream"
-      }
-    }
-  }
+   },
+   "version" : "1"
 }
 ```
