@@ -153,9 +153,9 @@ Provider systems:
 ```json
 {
  	"reason": "",
- 	 "version": "1.0",
-  	"prescriptionList: { .......}
-    	 "statusCode": "0"
+ 	 "version": "1",
+   "prescriptionList: { .......},
+	 "statusCode": "0"
 }
 ```
 
