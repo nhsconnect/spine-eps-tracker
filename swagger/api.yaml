@@ -510,7 +510,7 @@ definitions:
         example: 20180903
       prescriptionTreatmentType:
         type: object
-        $ref: '#/definitions/PrescriptionTreatmentType'
+        $ref: '#/definitions/PrescriptionTreatmentTypeDescription'
       epsVersion:
         description: |
           EPS Release number allowing EPS R1 (paper) and R2 (electronic) prescriptions to be filtered. EPS R1 status is not reliable as there is no requirement for dispensers to mark as dispensed or claimed or ability to cancel, and the existence of an R1 prescription on Spine does not mean that the prescription has been made available to the patient
@@ -551,6 +551,9 @@ definitions:
         type: string
         description: Prescription Treatment Type description
         example: Repeat Prescribing
+  PrescriptionTreatmentTypeDescription:
+    type: string
+    enum: ['Acute Prescription', 'Repeat Dispensing Prescription', 'Repeat Prescribing Prescription']
   PrescriptionType:
     type: object
     properties:
