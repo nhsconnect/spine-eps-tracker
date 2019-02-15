@@ -482,8 +482,7 @@ definitions:
             example: 1
       prescriptionStatus:
         type: string
-        description: Prescription Status
-        example: To Be Dispensed
+        $ref: '#/definitions/PrescriptionStatusDescription'
       prescriptionDownloadDate:
         type: string
         description: Datetime in UTC of most recent prescription download event. Format is HL7 - `YYYYMMDDHHMMSS` or `False` or empty string where not present
@@ -576,6 +575,9 @@ definitions:
         type: string
         description: Status code, e.g. 0001
         example: '0001'
+  PrescriptionStatusDescription:
+    type: string
+    enum: [Awaiting Release Ready','To Be Dispensed','With Dispenser','With Dispenser - Active','Expired','Cancelled','Dispensed','Not Dispensed','Claimed','No-Claimed','Prescription future instance','Repeat Dispense future instance','Cancelled future instance']
   LineItem:
     type: object
     properties:
@@ -589,7 +591,7 @@ definitions:
     type: object
     properties:
       itemStatus:
-        $ref: '#/definitions/PrescriptionStatus'
+        $ref: '#/definitions/PrescriptionStatusDescription'
       description:
         type: string
         description: Prescribed medication name, strength and form as per dm+d concept definition
