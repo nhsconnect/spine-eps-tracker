@@ -1,10 +1,9 @@
 ---
-title: Search for prescriptions
+title: View Prescription With Detail
 keywords: develop
 tags: [develop]
 sidebar: overview_sidebar
 permalink: develop_use_case_view_prescription_with_detail.html
-summary: Search for prescriptions
 ---
 
 ## API Use Case ##
