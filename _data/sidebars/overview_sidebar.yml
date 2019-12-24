@@ -12,9 +12,6 @@ entries:
       url: /index.html
       output: web, pdf
       type: homepage
-    - title: Workshops
-      url: /overview_workshops.html
-      output: web
     - title: Glossary
       url: /overview_glossary.html
       output: web
@@ -32,13 +29,21 @@ entries:
     - title: Overview
       url: /develop_overview.html
       output: web
-    - title: Search for prescriptions
+    - title: API Reference
+      url: /develop_api_reference.html
+      output: web
+    - title: Search for basic prescription information
       url: /develop_use_case_search_for_prescriptions.html
       output: web
-    - title: Retrieve a prescription
+    - title: Retrieve basic prescription information
       url: /develop_use_case_retrieve_a_prescription.html
       output: web
-
+    - title: Search for detailed prescription information
+      url: /develop_use_case_search_for_prescriptions_with_detail.html
+      output: web
+    - title: Retrieve detailed prescription information
+      url: /develop_use_case_view_prescription_with_detail.html
+      output: web
 #  - title: Capabilities
 #    output: web
 #    folderitems:
@@ -62,7 +67,7 @@ entries:
 
 #  - title: Communications
 #    output: web
-#    folderitems:    
+#    folderitems:
 #    - title: Overview
 #      url: /communications_overview.html
 #      output: web
@@ -93,7 +98,7 @@ entries:
 #      output: web
 #    - title: Design
 #      url: /tag_design.html
-#      output: web	  
+#      output: web
 #    - title: Development
 #      url: /tag_development.html
 #      output: web
@@ -111,7 +116,7 @@ entries:
 #      output: web
 #    - title: Support
 #      url: /tag_support.html
-#      output: web	  
+#      output: web
 #    - title: Clinical Safety
 #      url: /tag_clinical_safety.html
 #      output: web

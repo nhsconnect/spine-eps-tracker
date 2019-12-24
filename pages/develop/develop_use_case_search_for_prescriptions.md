@@ -46,10 +46,10 @@ In addition, the external system may also provide the following optional paramet
 #### Absolute Request ####
 
 ```http
-GET https://[eps_tracker_server]/mm/prescriptions?nhsNumber={nhsNumber}&format=trace-summary&earliestDate={earliestDate}&latestDate={latestDate}&prescriptionStatus={prescriptionStatus}&prescriptionVersion={prescriptionVersion}&version={version}
+GET https://[spine_host]/mm/prescriptions?nhsNumber={nhsNumber}&format=trace-summary&earliestDate={earliestDate}&latestDate={latestDate}&prescriptionStatus={prescriptionStatus}&prescriptionVersion={prescriptionVersion}&version={version}
 ```
 
-> [eps_tracker_server] = mm-sync.national.ncrs.nhs.uk
+> Host details for all Spine environments can be retrieved from [Spine Assurance Portal](http://www.assurancesupport.digital.nhs.uk)
 
 #### Request Headers ####
 
@@ -59,22 +59,22 @@ Consumers SHALL include the following additional HTTP request headers:
 |----------------------|-------|
 | `Accept`             | `application/json` |
 | `Spine-From-Asid`    | Consumer's ASID |
+| `Spine-UserId`            | User ID |
+| `Spine-RoleProfileId`     | Role Profile ID |
 
 Consumers MAY include the following additional HTTP request headers:
 
 | Header               | Value |
 |----------------------|-------|
 | `Eps-TraceId`             | Message Trace ID |
-| `Spine-UserId`            | User ID |
-| `Spine-RoleProfileId`     | Role Profile ID |
 
 The incoming headers are validated to ensure the correct type and length of parameters:
 
 | Parameter | Mandatory | Length | Restrictions | Used in search |
 |-----------|-----------|--------|--------------|----------------|
 | `Spine-From-Asid` | Y | 12 | 12 digits | N |
-| `Spine-UserId`    | N |	12 | 12 digits | N |
-| `Spine-RoleProfileId` | N | 12 | 12 digits | N |
+| `Spine-UserId`    | Y |	12 | 12 digits | N |
+| `Spine-RoleProfileId` | Y | 12 | 12 digits | N |
 | `Eps-TraceId` | N | Max 30 | Up to 30 characters (upper or lower case), digits or the – (dash) | N |
 
 > The Spine Interaction Id for this operation is `ExternalPrescriptionSearch_1_0`.
@@ -109,7 +109,7 @@ The parameter names are as follows, note that these are case sensitive:
     NO_CLAIMED = '0009'
     REPEAT_DISPENSE_FUTURE_INSTANCE = '9000'
     FUTURE_DATED_PRESCRIPTION = '9001'
-    PENDING_CANCELLATION = '9005'	Y
+    PENDING_CANCELLATION = '9005'
 ```
 
 #### Error Handling ####
@@ -125,7 +125,7 @@ For example:
   "reason": "Invalid or missing NHS number",
   "version": "1",
   "prescriptions": {
-    
+
   },
   "statusCode": "61"
 }

@@ -4,25 +4,25 @@ keywords: develop
 tags: [develop]
 sidebar: overview_sidebar
 permalink: develop_overview.html
-summary: An overview of the high-level approach for the ePS tracker APIs.
+summary: An overview of the high-level approach for the EPS tracker APIs.
 ---
 
 ## Security ##
 
-Security of the service follows established mechanisms for synchronous queries on the Spine. Systems are required to be registered endpoints and will need to register the appropriate message set for their accredited system. They will have a Spine2 issued certificate and communications are secured over TLS mutual authentication. Thus only authorised external systems will have access to this service. 
+Security of the service follows established mechanisms for synchronous queries on the Spine. Systems are required to be registered endpoints and will need to register the appropriate message set for their accredited system. They will have a Spine2 issued certificate and communications are secured over TLS mutual authentication. Thus only authorised external systems will have access to this service.
 
 This will be enforced by checking that:
 
-- the ASID of the sender matches that of the certificate.
+- the ASID of the sender matches that of the certificate being used to connect.
 - the ASID of the sender is included in the list of allowed ASIDs for this interaction.
 
 ## Requests ##
 
-All requests are standard HTTP GET requests using the `application/json` mime-type.
+All requests are HTTP GET requests.
 
 # Response #
 
-The json response will follow a simple four part structure. Note that these sections are not ordered so may appear in any order. 
+The json response will follow a simple four part structure. Note that these sections are not ordered so may appear in any order.
 
 ![ePS Tracker Response](images/develop/eps-tracker-response.png)
 

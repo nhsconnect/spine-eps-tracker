@@ -9,7 +9,7 @@ summary: Retrieve a prescription
 
 ## API Use Case ##
 
-This specification describes a single use cases (i.e. Retrieve a prescription).
+This specification describes a single use case (i.e. Retrieve a prescription).
 
 ## Security ##
 
@@ -37,10 +37,9 @@ To retrieve a particular prescription the external system will make an HTTP requ
 #### Absolute Request ####
 
 ```http
-GET https://[eps_tracker_server]/mm/prescriptions/{prescriptionId}?format=trace&version={version}&issueNumber{issueNumber}
+GET https://[spine_host]/mm/prescriptions/{prescriptionId}?format=trace&version={version}&issueNumber{issueNumber}
 ```
-
-> [eps_tracker_server] = mm-sync.national.ncrs.nhs.uk
+> Host details for all Spine environments can be retrieved from [Spine Assurance Portal](http://www.assurancesupport.digital.nhs.uk)
 
 #### Request Headers ####
 
@@ -50,22 +49,23 @@ Consumers SHALL include the following additional HTTP request headers:
 |----------------------|-------|
 | `Accept`             | `application/json` |
 | `Spine-From-Asid`    | Consumer's ASID |
+| `Spine-UserId`            | User ID |
+| `Spine-RoleProfileId`     | Role Profile ID |
 
 Consumers MAY include the following additional HTTP request headers:
 
 | Header               | Value |
 |----------------------|-------|
 | `Eps-TraceId`             | Message Trace ID |
-| `Spine-UserId`            | User ID |
-| `Spine-RoleProfileId`     | Role Profile ID |
+
 
 The incoming headers are validated to ensure the correct type and length of parameters:
 
 | Parameter | Mandatory | Length | Restrictions | Used in search |
 |-----------|-----------|--------|--------------|----------------|
 | `Spine-From-Asid` | Y | 12 | 12 digits | N |
-| `Spine-UserId`    | N |	12 | 12 digits | N |
-| `Spine-RoleProfileId` | N | 12 | 12 digits | N |
+| `Spine-UserId`    | Y |	12 | 12 digits | N |
+| `Spine-RoleProfileId` | Y | 12 | 12 digits | N |
 | `Eps-TraceId` | N | Max 30 | Up to 30 characters (upper or lower case), digits or the – (dash) | N |
 
 #### Payload Request Parameters ####
@@ -95,7 +95,7 @@ If the query is unsuccessful the statusCode not be '0' and the reason will be po
   "reason": "Not found",
   "version": "1.0",
   "prescription": {
-    
+
   },
   "statusCode": "1"
 }

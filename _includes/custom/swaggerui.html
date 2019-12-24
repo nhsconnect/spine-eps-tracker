@@ -1,0 +1,44 @@
+<style type="text/css">
+#content,#content *,#content a:hover,#content a:visited,#content a:active{
+
+}
+</style>
+<link rel="stylesheet"  type="text/css" href="https://unpkg.com/swagger-ui-dist@3/swagger-ui.css"/>
+<style> .swagger-ui .scheme-container, .swagger-ui .topbar, .swagger-ui .auth-wrapper { display: none !important; } </style>
+<script src="https://unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js"></script>
+
+<script>
+
+  window.onload = function() {
+
+    const DisableTryItOutPlugin = function() {
+      return {
+        statePlugins: {
+          spec: {
+            wrapSelectors: {
+              allowTryItOutFor: () => () => false
+            }
+          }
+        }
+      }
+    }
+    // Build a system
+    const ui = SwaggerUIBundle({
+      url: "{{page.swagger}}",
+      dom_id: '#content',
+      defaultModelsExpandDepth: -1,
+      docExpansion: "full",
+      deepLinking: true,
+      presets: [
+        SwaggerUIBundle.presets.apis
+      ],
+      plugins: [
+        SwaggerUIBundle.plugins.DownloadUrl,
+        DisableTryItOutPlugin
+      ]
+    })
+
+    window.ui = ui
+  }
+
+</script>
