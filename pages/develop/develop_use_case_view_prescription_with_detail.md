@@ -1,5 +1,5 @@
 ---
-title: View Prescription With Detail
+title: Retrieve detailed prescription information
 keywords: develop
 tags: [develop]
 sidebar: overview_sidebar

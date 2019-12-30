@@ -1,5 +1,5 @@
 ---
-title: Search for prescriptions
+title: Search for detailed prescription information
 keywords: develop
 tags: [develop]
 sidebar: overview_sidebar

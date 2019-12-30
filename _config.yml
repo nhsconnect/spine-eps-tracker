@@ -11,7 +11,7 @@ site_title: Spine ePS Tracker
 company_name: NHS Digital
 # this appears in the footer
 
-github_editme_path: /edit/gh-pages/
+github_editme_path:
 # if you're using Github, provide the basepath to the branch you've created for reviews, following the sample here. if not, leave this value blank.
 
 #disqus: true
@@ -89,7 +89,6 @@ defaults:
 
 sidebars:
 - overview_sidebar
-- capability_one_sidebar
 
 description: "Description of the site."
 # the description is used in the feed.xml file
@@ -99,7 +98,7 @@ sitemap: true
 # needed for sitemap.xml file only
 url: https://nhsconnect.github.io/spine-eps-tracker
 
-repository: github_account/github_repo
+repository: nhsconnect/spine-eps-tracker
 
 gist:
   noscript: false

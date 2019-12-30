@@ -1,7 +1,7 @@
 entries:
 - title: Spine ePS Tracker
   product: Spine ePS Tracker<br/>
-  version: 1.0.0-alpha.1
+  version: 1.1.0
   levels: one
   folders:
 
@@ -16,21 +16,11 @@ entries:
       url: /overview_glossary.html
       output: web
 
-#  - title: Explore
-#    output: web
-#    folderitems:
-#    - title: Overview
-#      url: /explore_overview.html
-#      output: web
-
-  - title: Develop
+  - title: API Reference
     output: web
     folderitems:
     - title: Overview
       url: /develop_overview.html
-      output: web
-    - title: API Reference
-      url: /develop_api_reference.html
       output: web
     - title: Search for basic prescription information
       url: /develop_use_case_search_for_prescriptions.html
@@ -44,88 +34,4 @@ entries:
     - title: Retrieve detailed prescription information
       url: /develop_use_case_view_prescription_with_detail.html
       output: web
-#  - title: Capabilities
-#    output: web
-#    folderitems:
-#    - title: Capability One
-#      url: /capability_one.html
-#      output: web
 
-#  - title: Assure
-#    output: web
-#    folderitems:
-#    - title: Overview
-#      url: /assure_overview.html
-#      output: web
-
-#  - title: Deploy
-#    output: web
-#    folderitems:
-#    - title: Overview
-#      url: /deploy_overview.html
-#      output: web
-
-#  - title: Communications
-#    output: web
-#    folderitems:
-#    - title: Overview
-#      url: /communications_overview.html
-#      output: web
-#    - title: Frequently Asked Questions (FAQ)
-#      url: /communications_faq.html
-#      output: web
-
-#  - title: Tags
-#    output: web
-#    folderitems:
-#    - title: News
-#      url: /tag_news.html
-#      output: web
-#    - title: Getting Started
-#      url: /tag_getting_started.html
-#      output: web
-#    - title: First of Type
-#      url: /tag_first_of_type.html
-#      output: web
-#    - title: FHIR&reg;
-#      url: /tag_fhir.html
-#      output: web
-#    - title: Use Case
-#      url: /tag_use_case.html
-#      output: web
-#    - title: Engagement
-#      url: /tag_engagement.html
-#      output: web
-#    - title: Design
-#      url: /tag_design.html
-#      output: web
-#    - title: Development
-#      url: /tag_development.html
-#      output: web
-#    - title: Integration
-#      url: /tag_integration.html
-#      output: web
-#    - title: Testing
-#      url: /tag_testing.html
-#      output: web
-#    - title: Assurance
-#      url: /tag_assurance.html
-#      output: web
-#    - title: Deployment
-#      url: /tag_deployment.html
-#      output: web
-#    - title: Support
-#      url: /tag_support.html
-#      output: web
-#    - title: Clinical Safety
-#      url: /tag_clinical_safety.html
-#      output: web
-#    - title: Information Governance
-#      url: /tag_information_governance.html
-#      output: web
-#    - title: Commissioning
-#      url: /tag_commissioning.html
-#      output: web
-#    - title: Code Snippet
-#      url: /tag_code_snippet.html
-#      output: web

@@ -1,10 +1,9 @@
 ---
-title: Retrieve a prescription
+title: Retrieve basic prescription information
 keywords: develop
 tags: [develop]
 sidebar: overview_sidebar
 permalink: develop_use_case_retrieve_a_prescription.html
-summary: Retrieve a prescription
 ---
 
 ## API Use Case ##
@@ -171,16 +170,3 @@ Provider systems:
 }
 ```
 
-## Examples ##
-
-### C# ###
-
-```csharp
-Hello World
-```
-
-### Java ###
-
-```java
-Hello World
-```

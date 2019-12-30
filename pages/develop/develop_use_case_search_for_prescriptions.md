@@ -1,10 +1,9 @@
 ---
-title: Search for prescriptions
+title: Search for basic prescription information
 keywords: develop
 tags: [develop]
 sidebar: overview_sidebar
 permalink: develop_use_case_search_for_prescriptions.html
-summary: Search for prescriptions
 ---
 
 ## API Use Case ##
@@ -437,18 +436,4 @@ Provider systems:
   },
   "statusCode": "0"
 }
-```
-
-## Examples ##
-
-### C# ###
-
-```csharp
-Hello World
-```
-
-### Java ###
-
-```java
-Hello World
 ```
