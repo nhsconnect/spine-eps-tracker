@@ -21,7 +21,7 @@ This specification describes a single use cases (i.e. Search for a list of presc
 To search for a list of prescriptions the external system will make an HTTP request which should include, as a minimum, the following parameters:
 
 - NHS Number
-- Format (this is a fixed value of ‘trace-summary’. Introduced for forwards compatibility)
+- Format (this is a fixed value of `trace-summary`. Introduced for forwards compatibility)
 
 In addition, the external system may also provide the following optional parameters:
 
@@ -78,9 +78,9 @@ The incoming headers are validated to ensure the correct type and length of para
 
 > The Spine Interaction Id for this operation is `ExternalPrescriptionSearch_1_0`.
 
-#### Payload Request Parameters ####
+#### HTTP Query String Parameters ####
 
-The incoming parameters are validated to ensure the correct length of parameters and allowable characters.
+The incoming parameters, found in the URL query string, are validated to ensure the correct length of parameters and allowable characters.
 
 The parameter names are as follows, note that these are case sensitive:
 
@@ -93,7 +93,7 @@ The parameter names are as follows, note that these are case sensitive:
 | `prescriptionVersion` | parameter | N | Must be ‘1’, ‘2’, ‘R1’ or ‘R2’ | Y |
 | `version`             | parameter | N | Must be either the previous or current version of the service | N |
 
-##### Prescription State #####
+*Prescription State*
 
 ```code
     AWAITING_RELEASE_READY = '0000'
@@ -130,310 +130,314 @@ For example:
 }
 ```
 
-### Request Response ###
+See [Error Handling](develop_overview.html#error-handling) for details of possible error codes.
 
-The output is a proprietary JSON format, the content type is 'application/json'and elements will appear in no particular order.
+### API Response ###
 
-The HTTP status will, under most circumstances be 200. If the query is successful the statusCode will be '0' and the reason will be '' (empty string).
+The response uses a proprietary JSON format, the content type is `application/json` and elements will appear in no particular order.
+
+The HTTP status will, under most circumstances be `200`. If the query is successful the statusCode will be `0` and the reason will be an empty string.
 
 #### Response Headers ####
 
 No special response headers are utilised.
 
-#### Payload Response Body ####
+#### Response Body ####
 
-Provider systems:
+A `200` **OK** HTTP status code will be returned on successful execution of the API call.
 
-- SHALL return a `200` **OK** HTTP status code on successful execution of the operation.
-
-```json
-{
- 	"reason": "",
- 	 "version": "1.0",
-  	"prescriptionList: { .......}
-    	 "statusCode": "0"
-}
-```
-
-*Successful search with a single prescription found*
+A simplified response body is provided below:
 
 ```json
 {
-  "reason": "",
-  "version": "1",
-  " prescriptionList": {
-    "A3B4D9-Z42475-11E6B+": {
-      "prescriptionTreatmentType": {
-        "prescriptionTreatmentTypeText": "Repeat Dispensing",
-        "prescriptionTreatmentTypeCode": "0003"
-      },
-      "prescriptionIssueDate": "20160711110721",
-      "pendingCancellations": "False",
-      "lastEventDate": "20160711110722",
-      "currentIssueNumber": "1",
-      "issues": {
-        "1": {
-          "issueDate": "False",
-          "lineItems": {
-            "1": {
-              "status": {
-                "statusText": "To Be Dispensed",
-                "statusCode": "0007"
-              }
-            },
-            "2": {
-              "status": {
-                "statusText": "To Be Dispensed",
-                "statusCode": "0007"
-              }
-            }
-          },
-          "prescriptionStatus": {
-            "statusText": "To Be Dispensed",
-            "statusCode": "0001"
-          }
-        },
-        "2": {
-          "issueDate": "False",
-          "lineItems": {
-            "1": {
-              "status": {
-                "statusText": "To Be Dispensed",
-                "statusCode": "0007"
-              }
-            },
-            "2": {
-              "status": {
-                "statusText": "To Be Dispensed",
-                "statusCode": "0007"
-              }
-            }
-          },
-          "prescriptionStatus": {
-            "statusText": "Prescription future instance",
-            "statusCode": "9000"
-          }
-        }
-      },
-      "patientNhsNumber": "9912003489"
-    }
-  },
-  "statusCode": "0"
+   "reason": "",
+   "version": "1.0",
+   "prescriptionList: {.......},
+   "statusCode": "0"
 }
 ```
 
-*Successful search with multiple prescription found*
+{% include note.html content="This API use case do not provide details of medication, or the dispensing organisation. The [Search for detailed prescription information](develop_use_case_search_for_prescriptions_with_detail.html) API use case provides this additional information." %}
+
+## API examples ##
+
+### Scenario 1: Successful search finding two prescriptions ###
+
+Given the following request:
+
+```code
+GET https://[spine_host]/mm/prescriptions?nhsNumber=9691003120&format=trace-summary
+```
+
+The response shows, for NHS Number `9691003120`, that in the previous 28 days, this person had the following presriptions:
+
+1. Prescription with ID `9BA2F6BD-14FD-6F8B-E050-D20AE3A254FDA`, with two items, which was produced in an acute setting, and is currently with the dispenser.
+2. A repeat prescription with ID `9BA2F6BD-14FE-6F8B-E050-D20AE3A254FDI`, with two items, also currently with dispenser. 
+
+
+#### Reponse Header ####
+
+```code
+HTTP/1.1 200 OK
+Date: Wed, 08 Jan 2020 16:10:47 GMT
+Content-Type: application/json
+Connection: keep-alive
+Etag: "bafcc747f93f0e3a668de87e61d1a2a477b97ce8"
+```
+
+#### Response Body ####
 
 ```json
 {
-  "reason": "",
-  "version": "1",
-  " prescriptionList ": {
-    "D29E5B-Z5C475-11E6AR": {
-      "prescriptionTreatmentType": {
-        "prescriptionTreatmentTypeText": "Repeat Prescribing",
-        "prescriptionTreatmentTypeCode": "0002"
-      },
-      "prescriptionIssueDate": "20150909194211",
-      "pendingCancellations": "False",
-      "lastEventDate": "20150909194214",
-      "currentIssueNumber": "1",
-      "issues": {
-        "1": {
-          "issueDate": "20150909",
-          "lineItems": {
-            "1": {
-              "status": {
-                "statusText": "Item with dispenser",
-                "statusCode": "0008"
-              }
-            },
-            "2": {
-              "status": {
-                "statusText": "Item with dispenser",
-                "statusCode": "0008"
-              }
-            }
-          },
-          "prescriptionStatus": {
-            "statusText": "With Dispenser",
-            "statusCode": "0002"
-          }
-        }
-      },
-      "patientNhsNumber": "9990406480"
-    },
-    "D2A223-Z2C475-11E6AQ": {
-      "prescriptionTreatmentType": {
-        "prescriptionTreatmentTypeText": "Repeat Prescribing",
-        "prescriptionTreatmentTypeCode": "0002"
-      },
-      "prescriptionIssueDate": "20150909194211",
-      "pendingCancellations": "False",
-      "lastEventDate": "20150909194214",
-      "currentIssueNumber": "1",
-      "issues": {
-        "1": {
-          "issueDate": "20150909",
-          "lineItems": {
-            "1": {
-              "status": {
-                "statusText": "Item with dispenser",
-                "statusCode": "0008"
-              }
-            },
-            "2": {
-              "status": {
-                "statusText": "Item with dispenser",
-                "statusCode": "0008"
-              }
-            }
-          },
-          "prescriptionStatus": {
-            "statusText": "With Dispenser",
-            "statusCode": "0002"
-          }
-        }
-      },
-      "patientNhsNumber": "9990406480"
-    },
-    "D2A238-Z9E475-11E6AE": {
-      "prescriptionTreatmentType": {
-        "prescriptionTreatmentTypeText": "Repeat Prescribing",
-        "prescriptionTreatmentTypeCode": "0002"
-      },
-      "prescriptionIssueDate": "20150909194211",
-      "pendingCancellations": "False",
-      "lastEventDate": "20150909194214",
-      "currentIssueNumber": "1",
-      "issues": {
-        "1": {
-          "issueDate": "20150909",
-          "lineItems": {
-            "1": {
-              "status": {
-                "statusText": "Item with dispenser",
-                "statusCode": "0008"
-              }
-            },
-            "2": {
-              "status": {
-                "statusText": "Item with dispenser",
-                "statusCode": "0008"
-              }
-            }
-          },
-          "prescriptionStatus": {
-            "statusText": "With Dispenser",
-            "statusCode": "0002"
-          }
-        }
-      },
-      "patientNhsNumber": "9990406480"
-    },
-    "D2A080EE-475C-11E6-A68F-08002732570CN": {
-      "prescriptionTreatmentType": {
-        "prescriptionTreatmentTypeText": "Repeat Prescribing",
-        "prescriptionTreatmentTypeCode": "0002"
-      },
-      "prescriptionIssueDate": "20150909194211",
-      "pendingCancellations": "False",
-      "lastEventDate": "20150909194214",
-      "currentIssueNumber": "1",
-      "issues": {
-        "1": {
-          "issueDate": "20150909",
-          "lineItems": {
-            "1": {
-              "status": {
-                "statusText": "Item with dispenser",
-                "statusCode": "0008"
-              }
-            },
-            "2": {
-              "status": {
-                "statusText": "Item with dispenser",
-                "statusCode": "0008"
-              }
-            }
-          },
-          "prescriptionStatus": {
-            "statusText": "With Dispenser",
-            "statusCode": "0002"
-          }
-        }
-      },
-      "patientNhsNumber": "9990406480"
-    },
-    "D2A22A-Z70475-11E6AH": {
-      "prescriptionTreatmentType": {
-        "prescriptionTreatmentTypeText": "Repeat Prescribing",
-        "prescriptionTreatmentTypeCode": "0002"
-      },
-      "prescriptionIssueDate": "20150909194211",
-      "pendingCancellations": "False",
-      "lastEventDate": "20150909194214",
-      "currentIssueNumber": "1",
-      "issues": {
-        "1": {
-          "issueDate": "20150909",
-          "lineItems": {
-            "1": {
-              "status": {
-                "statusText": "Item with dispenser",
-                "statusCode": "0008"
-              }
-            },
-            "2": {
-              "status": {
-                "statusText": "Item with dispenser",
-                "statusCode": "0008"
-              }
-            }
-          },
-          "prescriptionStatus": {
-            "statusText": "With Dispenser",
-            "statusCode": "0002"
-          }
-        }
-      },
-      "patientNhsNumber": "9990406480"
-    },
-    "D2A22C50-475C-11E6-A68F-08002732570CN": {
-      "prescriptionTreatmentType": {
-        "prescriptionTreatmentTypeText": "Repeat Prescribing",
-        "prescriptionTreatmentTypeCode": "0002"
-      },
-      "prescriptionIssueDate": "20150909194211",
-      "pendingCancellations": "False",
-      "lastEventDate": "20150909194214",
-      "currentIssueNumber": "1",
-      "issues": {
-        "1": {
-          "issueDate": "20150909",
-          "lineItems": {
-            "1": {
-              "status": {
-                "statusText": "Item with dispenser",
-                "statusCode": "0008"
-              }
-            },
-            "2": {
-              "status": {
-                "statusText": "Item with dispenser",
-                "statusCode": "0008"
-              }
-            }
-          },
-          "prescriptionStatus": {
-            "statusText": "With Dispenser",
-            "statusCode": "0002"
-          }
-        }
-      },
-      "patientNhsNumber": "9990406480"
-    }
-  },
-  "statusCode": "0"
+	"prescriptionList": {
+		"9BA2F6BD-14FD-6F8B-E050-D20AE3A254FDA": {
+			"prescriptionTreatmentType": {
+				"prescriptionTreatmentTypeText": "Acute Prescription",
+				"prescriptionTreatmentTypeCode": "0001"
+			},
+			"prescriptionIssueDate": "20200108120100",
+			"pendingCancellations": "False",
+			"lastEventDate": "20200108144900",
+			"currentIssueNumber": "1",
+			"issues": {
+				"1": {
+					"issueDate": "20200108",
+					"lineItems": {
+						"1": {
+							"status": {
+								"statusText": "Item with dispenser",
+								"statusCode": "0008"
+							}
+						},
+						"2": {
+							"status": {
+								"statusText": "Item with dispenser",
+								"statusCode": "0008"
+							}
+						}
+					},
+					"prescriptionStatus": {
+						"statusText": "With Dispenser",
+						"statusCode": "0002"
+					}
+				}
+			},
+			"patientNhsNumber": "9691003120"
+		},
+		"9BA2F6BD-14FE-6F8B-E050-D20AE3A254FDI": {
+			"prescriptionTreatmentType": {
+				"prescriptionTreatmentTypeText": "Repeat Prescribing",
+				"prescriptionTreatmentTypeCode": "0002"
+			},
+			"prescriptionIssueDate": "20200108120100",
+			"pendingCancellations": "False",
+			"lastEventDate": "20200108144900",
+			"currentIssueNumber": "1",
+			"issues": {
+				"1": {
+					"issueDate": "20200108",
+					"lineItems": {
+						"1": {
+							"status": {
+								"statusText": "Item with dispenser",
+								"statusCode": "0008"
+							}
+						},
+						"2": {
+							"status": {
+								"statusText": "Item with dispenser",
+								"statusCode": "0008"
+							}
+						}
+					},
+					"prescriptionStatus": {
+						"statusText": "With Dispenser",
+						"statusCode": "0002"
+					}
+				}
+			},
+			"patientNhsNumber": "9691003120"
+		}
+	},
+	"reason": "",
+	"version": "1",
+	"statusCode": "0"
 }
 ```
+
+### Scenario 2: Successful search finding one repeat dispensing prescription ###
+
+Given the following request:
+
+```code
+GET https://[spine_host]/mm/prescriptions?nhsNumber=9691003147&format=trace-summary
+```
+
+The response shows, for NHS Number `9691003147`, that in the previous 28 days, this person had a single prescription:
+
+Prescription ID `3AF2CB-C86002-0000BX` is a repeat dispensing prescription, and the first of the batch of 6 issues of the prescription currently being dispensed. This is has two items, one of which thus far has been dispensed.
+
+
+#### Reponse Header ####
+
+```code
+HTTP/1.1 200 OK
+Date: Wed, 08 Jan 2020 16:14:36 GMT
+Content-Type: application/json
+Connection: keep-alive
+Etag: "8aa3b443d22146867cb8e9d36afb14dc9363bbc2"
+```
+
+#### Response Body ####
+
+```json
+{
+	"prescriptionList": {
+		"3AF2CB-C86002-0000BX": {
+			"prescriptionTreatmentType": {
+				"prescriptionTreatmentTypeText": "Repeat Dispensing",
+				"prescriptionTreatmentTypeCode": "0003"
+			},
+			"prescriptionIssueDate": "20200108120100",
+			"pendingCancellations": "False",
+			"lastEventDate": "20200108144916",
+			"currentIssueNumber": "1",
+			"issues": {
+				"1": {
+					"issueDate": "20200108",
+					"lineItems": {
+						"1": {
+							"status": {
+								"statusText": "Item fully dispensed",
+								"statusCode": "0001"
+							}
+						},
+						"2": {
+							"status": {
+								"statusText": "Item not dispensed owing",
+								"statusCode": "0004"
+							}
+						}
+					},
+					"prescriptionStatus": {
+						"statusText": "With Dispenser - Active",
+						"statusCode": "0003"
+					}
+				},
+				"3": {
+					"issueDate": "False",
+					"lineItems": {
+						"1": {
+							"status": {
+								"statusText": "To Be Dispensed",
+								"statusCode": "0007"
+							}
+						},
+						"2": {
+							"status": {
+								"statusText": "To Be Dispensed",
+								"statusCode": "0007"
+							}
+						}
+					},
+					"prescriptionStatus": {
+						"statusText": "Repeat Dispense future instance",
+						"statusCode": "9000"
+					}
+				},
+				"2": {
+					"issueDate": "False",
+					"lineItems": {
+						"1": {
+							"status": {
+								"statusText": "To Be Dispensed",
+								"statusCode": "0007"
+							}
+						},
+						"2": {
+							"status": {
+								"statusText": "To Be Dispensed",
+								"statusCode": "0007"
+							}
+						}
+					},
+					"prescriptionStatus": {
+						"statusText": "Repeat Dispense future instance",
+						"statusCode": "9000"
+					}
+				},
+				"5": {
+					"issueDate": "False",
+					"lineItems": {
+						"1": {
+							"status": {
+								"statusText": "To Be Dispensed",
+								"statusCode": "0007"
+							}
+						},
+						"2": {
+							"status": {
+								"statusText": "To Be Dispensed",
+								"statusCode": "0007"
+							}
+						}
+					},
+					"prescriptionStatus": {
+						"statusText": "Repeat Dispense future instance",
+						"statusCode": "9000"
+					}
+				},
+				"4": {
+					"issueDate": "False",
+					"lineItems": {
+						"1": {
+							"status": {
+								"statusText": "To Be Dispensed",
+								"statusCode": "0007"
+							}
+						},
+						"2": {
+							"status": {
+								"statusText": "To Be Dispensed",
+								"statusCode": "0007"
+							}
+						}
+					},
+					"prescriptionStatus": {
+						"statusText": "Repeat Dispense future instance",
+						"statusCode": "9000"
+					}
+				},
+				"6": {
+					"issueDate": "False",
+					"lineItems": {
+						"1": {
+							"status": {
+								"statusText": "To Be Dispensed",
+								"statusCode": "0007"
+							}
+						},
+						"2": {
+							"status": {
+								"statusText": "To Be Dispensed",
+								"statusCode": "0007"
+							}
+						}
+					},
+					"prescriptionStatus": {
+						"statusText": "Repeat Dispense future instance",
+						"statusCode": "9000"
+					}
+				}
+			},
+			"patientNhsNumber": "9691003147"
+		}
+	},
+	"reason": "",
+	"version": "1",
+	"statusCode": "0"
+}
+
+```
+
+

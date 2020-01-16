@@ -20,7 +20,7 @@ This will be enforced by checking that:
 
 All requests are HTTP GET requests.
 
-# Response #
+## Response ##
 
 The json response will follow a simple four part structure. Note that these sections are not ordered so may appear in any order.
 

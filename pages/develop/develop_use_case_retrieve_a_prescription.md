@@ -12,18 +12,18 @@ This specification describes a single use case (i.e. Retrieve a prescription).
 
 ## Security ##
 
-- Consumers and Producers SHALL utilise TLS Mutual Authentication (TLS-MA).
+- API clients SHALL utilise TLS Mutual Authentication (TLS-MA).
 
 ## Prerequisites ##
 
 ### Consumer ###
 
-To retrieve a particular prescription the external system will make an HTTP request which should include, as a minimum, the following parameters:
+To retrieve a particular prescription the external system will make an HTTP request which should include, as a minimum, the following in the URL:
 
-- Prescription Id (this form part of the URL)
-- Format (this is a fixed value of ‘trace’. Introduced for forwards compatibility)
-- issueNumber (optional)
-- Message version<sup>1</sup> (optional)
+- PrescriptionId
+- format (with a fixed value of `trace`. Introduced for forwards compatibility, specified in the query string)
+- issueNumber (optional, specified in the query string)
+- version<sup>1</sup> (optional, specified in the query string)
 
 <sup>1</sup>message version indicates the version of the message response and is not used as part of the search
 
@@ -67,7 +67,7 @@ The incoming headers are validated to ensure the correct type and length of para
 | `Spine-RoleProfileId` | Y | 12 | 12 digits | N |
 | `Eps-TraceId` | N | Max 30 | Up to 30 characters (upper or lower case), digits or the – (dash) | N |
 
-#### Payload Request Parameters ####
+#### HTTP Request Parameters ####
 
 The incoming parameters are validated to ensure the correct length of parameters and allowable characters.
 
@@ -100,73 +100,190 @@ If the query is unsuccessful the statusCode not be '0' and the reason will be po
 }
 ```
 
-### Request Response ###
+### API Response ###
 
 #### Response Headers ####
 
 No special response headers are utilised.
 
-#### Payload Response Body ####
+#### Response Body ####
 
-Provider systems:
+An `200` **OK** HTTP status code will be returned on successful execution of the operation.
 
-- SHALL return a `200` **OK** HTTP status code on successful execution of the operation.
+A simplified response body is given below:
 
 ```json
 {
   "reason": "",
   "version": "1",
   "prescription": {
-    "prescriptionType": {
-      "prescriptionTypeText": "GENERAL PRACTITIONER PRESCRIBING",
-      "prescriptionTypeCode": "0001"
-    },
-    "prescriptionTreatmentType": {
-      "prescriptionTreatmentTypeText": "Acute Prescription",
-      "prescriptionTreatmentTypeCode": "0001"
-    },
-    "nominatedDispenserODS": "FA666",
-    "daysSupply": "28",
-    "pendingCancellations": "False",
-    "prescribingOrganisationName": "VERNON STREET MEDICAL CTR",
-    "prescribingOrganisationContact": "01332332812",
-    "signingDate": "20120108210751",
-    "currentIssueNumber": "1",
-    "prescribingOrganisationODS": "C81007",
-    "prescriptionId": "000136-ZC2D5C-11E38K",
-    "lastEventDate": "20140507100013",
-    "nominatedDispenserName": "CROYDON PHARMACY",
-    "issue": {
-      "dispensingOrganisationODS": "FA666",
-      "appliedCancellations": "False",
-      "lastDispenseDate": "20140507",
-      "dispensingOrganisationContact": "",
-      "issueNumber": "1",
-      "lineItems": {
-        "1": {
-          "status": {
-            "statusText": "Item fully dispensed",
-            "statusCode": "0001"
-          },
-          "id": "02ED7776-21CD-4E7B-AC9D-D1DBFEE7B8CF"
-        },
-        "2": {
-          "status": {
-            "statusText": "Item fully dispensed",
-            "statusCode": "0001"
-          },
-          "id": "45D5FB11-D793-4D51-9ADD-95E0F54D2786"
-        }
-      },
-      "prescriptionStatus": {
-        "statusText": "Claimed",
-        "statusCode": "0008"
-      },
-      "dispensingOrganisationName": "CROYDON PHARMACY"
-    },
-    "patientNhsNumber": "9912003446"
   },
   "statusCode": "0"
 }
+```
+
+{% include note.html content="This API use case do not provide details of medication, or the dispensing organisation. The [Retrieve detailed prescription information](develop_use_case_view_prescription_with_detail.html) API use case provides this additional information." %}
+
+## API Examples ##
+
+### Scenario 1: Retrieve an repeat prescription ###
+
+Given the following request:
+
+```code
+GET https://msg.int.spine2.ncrs.nhs.uk/mm/prescriptions/48A894-C86002-00009E?format=trace
+```
+
+The response shows the basic details of repeat prescription ID `48A894-C86002-00009E`. The prescription is with the dispensing organsation `FRN79`. The prescription has two items, one of which has already been dispensed.
+
+#### Reponse Header ####
+
+```code
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=UTF-8
+Connection: keep-alive
+Etag: "240ea7f0845a03cffd33d9ee3826be1027cfc74d"
+```
+
+#### Response Body ####
+
+```json
+{
+	"reason": "",
+	"version": "1",
+	"prescription": {
+		"prescriptionType": {
+			"prescriptionTypeText": "PRIMARY CARE PRESCRIBER - PHARMACIST INDEPENDENT/SUPPLEMENTARY PRESCRIBER",
+			"prescriptionTypeCode": "0108"
+		},
+		"prescriptionTreatmentType": {
+			"prescriptionTreatmentTypeText": "Repeat Prescribing",
+			"prescriptionTreatmentTypeCode": "0002"
+		},
+		"nominatedDispenserODS": "FX012",
+		"daysSupply": "28",
+		"pendingCancellations": "False",
+		"prescribingOrganisationName": "XXX DO NOT USE XXX TEST GP PRACTICE 14",
+		"prescribingOrganisationContact": "",
+		"signingDate": "20200108120100",
+		"currentIssueNumber": "1",
+		"prescribingOrganisationODS": "Y90206",
+		"prescriptionId": "48A894-C86002-00009E",
+		"lastEventDate": "20200108144916",
+		"nominatedDispenserName": "",
+		"issue": {
+			"dispensingOrganisationODS": "FRN79",
+			"appliedCancellations": "False",
+			"lastDispenseDate": "20200108",
+			"dispensingOrganisationContact": "0113 397 4320",
+			"issueNumber": "1",
+			"lineItems": {
+				"1": {
+					"status": {
+						"statusText": "Item not dispensed owing",
+						"statusCode": "0004"
+					},
+					"id": "9BA2F6BD-1524-6F8B-E050-D20AE3A254FD"
+				},
+				"2": {
+					"status": {
+						"statusText": "Item fully dispensed",
+						"statusCode": "0001"
+					},
+					"id": "9BA2F6BD-1529-6F8B-E050-D20AE3A254FD"
+				}
+			},
+			"prescriptionStatus": {
+				"statusText": "With dispenser active",
+				"statusCode": "0003"
+			},
+			"dispensingOrganisationName": "ALLISON RL"
+		},
+		"patientNhsNumber": "9691003139"
+	},
+	"statusCode": "0"
+}
+```
+
+### Scenario 2: Retrieve second issue of a repeat dispensing prescription ###
+
+Given the following request:
+
+```code
+GET https://msg.int.spine2.ncrs.nhs.uk/mm/prescriptions/3AF2CB-C86002-0000BX?format=trace&issueNumber=2
+```
+
+The response shows the basic details of issue 2 of repeat dispensing prescription ID `3AF2CB-C86002-0000BX`. The prescription issue has two items. As this is a future instance, the items are not with the dispenser.
+
+#### Reponse Header ####
+
+```code
+HTTP/1.1 200 OK
+Date: Wed, 08 Jan 2020 15:38:16 GMT
+Content-Type: application/json; charset=UTF-8
+Connection: keep-alive
+Etag: "ae7f8ec260fb415f98228039c020dbd3662c8550"
+```
+
+#### Response Body ####
+
+```json
+{
+	"reason": "",
+	"version": "1",
+	"prescription": {
+		"prescriptionType": {
+			"prescriptionTypeText": "GENERAL PRACTITIONER PRESCRIBING - TRAINEE DOCTOR/GP REGISTRAR",
+			"prescriptionTypeCode": "0102"
+		},
+		"prescriptionTreatmentType": {
+			"prescriptionTreatmentTypeText": "Repeat Dispensing",
+			"prescriptionTreatmentTypeCode": "0003"
+		},
+		"nominatedDispenserODS": "FX012",
+		"daysSupply": "5",
+		"pendingCancellations": "False",
+		"prescribingOrganisationName": "VERNON STREET MEDICAL CTR",
+		"prescribingOrganisationContact": "0133 2332812",
+		"signingDate": "20200108120100",
+		"currentIssueNumber": "1",
+		"prescribingOrganisationODS": "C81007",
+		"prescriptionId": "3AF2CB-C86002-0000BX",
+		"lastEventDate": "20200108144916",
+		"nominatedDispenserName": "",
+		"issue": {
+			"dispensingOrganisationODS": "False",
+			"appliedCancellations": "False",
+			"lastDispenseDate": "False",
+			"dispensingOrganisationContact": "",
+			"issueNumber": "2",
+			"lineItems": {
+				"1": {
+					"status": {
+						"statusText": "To Be Dispensed",
+						"statusCode": "0007"
+					},
+					"id": "9BA2F6BD-152E-6F8B-E050-D20AE3A254FD"
+				},
+				"2": {
+					"status": {
+						"statusText": "To Be Dispensed",
+						"statusCode": "0007"
+					},
+					"id": "9BA2F6BD-1533-6F8B-E050-D20AE3A254FD"
+				}
+			},
+			"prescriptionStatus": {
+				"statusText": "Repeat dispense future instance",
+				"statusCode": "9000"
+			},
+			"dispensingOrganisationName": ""
+		},
+		"patientNhsNumber": "9691003147"
+	},
+	"statusCode": "0"
+}
+
+
 ```
 
