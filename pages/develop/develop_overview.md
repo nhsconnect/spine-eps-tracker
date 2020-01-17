@@ -24,7 +24,19 @@ All requests are HTTP GET requests.
 
 The json response will follow a simple four part structure. Note that these sections are not ordered so may appear in any order.
 
+Search for Basic prescriptions
+
 ![ePS Tracker Response](images/develop/eps-tracker-response.png)
+
+The "Prescription Information" section differs by API use case as follows:
+
+| API use case | Prescription Infomration json element |
+| ---- | ------ |
+| [Search for basic prescription information](develop_use_case_search_for_prescriptions.html) | PrescriptionList |
+| [Retrieve basic prescription information](develop_use_case_retrieve_a_prescription.html) | prescription |
+| [Search for detailed prescription information](develop_use_case_search_for_prescriptions_with_detail.html) | prescriptions |
+| [Retrieve detailed prescription information](develop_use_case_view_prescription_with_detail.html) | {prescription ID} |
+
 
 ## Error Handling ##
 

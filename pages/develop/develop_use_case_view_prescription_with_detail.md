@@ -13,8 +13,7 @@ so that I can base referral and prescribing information on the specific state of
 
 ## Security ##
 
-- Consumers and Producers SHALL utilise TLS Mutual Authentication (TLS-MA).
-- Producers SHALL verify that the requesting system's entry on Spine Directory Service is registered to use the interaction.
+- API clients SHALL utilise TLS Mutual Authentication (TLS-MA).
 
 ## Prerequisites ##
 
@@ -22,14 +21,14 @@ so that I can base referral and prescribing information on the specific state of
 The Spine Interaction Id for this operation is `urn:nhs:names:services:mmquery:NHS111_ItemDetail` - endpoints must be registered to use this interaction.
 
 ### User Authentication ###
-Users must be authenticated using Spine Security Broker, and provide user details in the request header.
+Users must be authenticated using Spine Security Broker, and provide user details in the HTTP request header.
 
 ### Prescription Information ###
 To view the detail of a prescription the requesting system will make an HTTP request which must include, as a minimum, the following parameters:
 
-- Prescription ID
-- Requesting User Details
-- Requesting System details
+- Prescription ID (in the HTTP querystring)
+- Requesting User Details (as HTTP custom headers `Spine-UserId` and `Spine-RoleProfileId`)
+- Requesting System details (as the HTTP custom header `Spine-From-Asid`)
 
 Optionally Requests can include:
 - Line Item ID
@@ -46,9 +45,9 @@ This information is likely to have been obtained from the results of a previous 
 To search for prescription ID 5B507C-Y90206-061F9E:
 
 ```bash
-curl --cacert certs/cacerts --cert certs/int-eps.crt.pem --key keys/int-eps.key.pem --header 'Spine-From-Asid: 200000000946' --header 'Spine-UserId: 313175813564' --header 'Spine-RoleProfileId: 562926913100' --header 'Accept: application/json' https://msg.int.spine2.ncrs.nhs.uk/mm/nhs111itemdetails?prescriptionId=5B507C-Y90206-061F9E
+curl --cacert certs/cacerts --cert certs/int-eps.crt.pem --key keys/int-eps.key.pem --header 'Spine-From-Asid: 200000000946' --header 'Spine-UserId: 313175813564' --header 'Spine-RoleProfileId: 562926913100' --header 'Accept: application/json' https://[spine_host]/mm/nhs111itemdetails?prescriptionId=5B507C-Y90206-061F9E
 ```
-> Host details for all Spine environments can be retrieved from [Spine Assurance Portal](http://www.assurancesupport.digital.nhs.uk)
+> Host details and for all Spine environments can be retrieved from [Spine Assurance Portal](http://www.assurancesupport.digital.nhs.uk). (HSCN connectivity required). Visit the this site also to request the necessary TLS certificates.
 
 #### Request Headers ####
 
@@ -76,7 +75,7 @@ The incoming headers are validated to ensure the correct type and length of para
 | `Spine-RoleProfileId` | Y | 12 | 12 digits | N |
 | `Eps-TraceId` | N | Max 30 | Up to 30 characters (upper or lower case), digits or the – (dash) | N |
 
-#### Request Parameters ####
+#### Request Querystring Parameters ####
 
 The incoming parameters are validated to ensure the correct format.
 
@@ -89,7 +88,14 @@ The parameter names are as follows, note that these are case sensitive:
 | `issueNumber`     | query parameter | N         | Integer - 1 based |
 
 
-### Responses ###
+### API Response ###
+
+The output is a proprietary JSON format, the content type is "application/json" and elements will appear in no particular order.
+
+The HTTP status will, under most circumstances be `200`. If the query is successful the statusCode element in the request body will be `0` and the reason will be an empty string.
+
+{% include note.html content="This API call response provides full details of medication in the lineItems element, include dosage, form, quantity, and SNOMED CT code" %}
+
 #### Error Handling ####
 
 If the query is unsuccessful the statusCode not be '0' and the reason will be populated.
@@ -109,171 +115,283 @@ For example:
 }
 ```
 
-The output is a proprietary JSON format, the content type is "application/json" and elements will appear in no particular order.
-
-The HTTP status will, under most circumstances be 200. If the query is successful the statusCode will be "0" and the reason will be "" (empty string).
+See [Error Handling](develop_overview.html#error-handling) for details of possible error codes.
 
 #### Response Headers ####
 
-No special response headers are utilised.
+No custom response headers are utilised.
 
-#### Payload Response Body ####
+#### Response Body ####
 
-Provider systems:
+An `200` **OK** HTTP status code will be returned on successful execution of the operation.
 
-- SHALL return a `200` **OK** HTTP status code on successful execution of the operation.
+A simplified example of this is given below:
 
 ```json
 {
  	"reason": "",
  	 "version": "1",
-   "prescriptionList: { .......},
+   "{Prescription ID}": { ... },
 	 "statusCode": "0"
 }
 ```
 
-*Successful search with a single prescription found*
+
+## API usage examples ##
+
+### Scenario 1: An acute EPS Release 1 prescription
+
+Given the following request:
+
+```code
+GET https://[spine_host]/mm/nhs111itemdetails?prescriptionId=9C18AE6F-510C-F7A3-E050-D20AE3A231C8C
+```
+
+The response details a prescription with two line items which is with the dispenser. 
+
+#### Response Headers ####
+
+```code
+HTTP/1.1 200 OK
+Date: Tue, 14 Jan 2020 11:52:04 GMT
+Content-Type: application/json
+Connection: keep-alive
+Strict-Transport-Security: max-age=15724800; includeSubDomains
+Etag: "7d8a7e431a3c71916c82631de7cfe990773a7baa"
+Pragma: no-cache
+Cache-Control: no-store
+```
+#### Response Body ####
 
 ```json
 {
-  "reason": "",
-  "version": "1",
-  " prescriptionList": {
-    "A3B4D9-Z42475-11E6B+": {
-      "prescriptionTreatmentType": {
-        "prescriptionTreatmentTypeText": "Repeat Dispensing",
-        "prescriptionTreatmentTypeCode": "0003"
-      },
-      "prescriptionIssueDate": "20160711110721",
-      "pendingCancellations": "False",
-      "lastEventDate": "20160711110722",
-      "currentIssueNumber": "1",
-      "issues": {
-        "1": {
-          "issueDate": "False",
-          "lineItems": {
-            "1": {
-              "status": {
-                "statusText": "To Be Dispensed",
-                "statusCode": "0007"
-              }
-            },
-            "2": {
-              "status": {
-                "statusText": "To Be Dispensed",
-                "statusCode": "0007"
-              }
-            }
-          },
-          "prescriptionStatus": {
-            "statusText": "To Be Dispensed",
-            "statusCode": "0001"
-          }
-        },
-        "2": {
-          "issueDate": "False",
-          "lineItems": {
-            "1": {
-              "status": {
-                "statusText": "To Be Dispensed",
-                "statusCode": "0007"
-              }
-            },
-            "2": {
-              "status": {
-                "statusText": "To Be Dispensed",
-                "statusCode": "0007"
-              }
-            }
-          },
-          "prescriptionStatus": {
-            "statusText": "Prescription future instance",
-            "statusCode": "9000"
-          }
-        }
-      },
-      "patientNhsNumber": "9912003489"
-    }
-  },
-  "statusCode": "0"
+	"reason": "",
+	"version": "1",
+	"9C18AE6F-510C-F7A3-E050-D20AE3A231C8C": {
+		"prescriptionDispensedDate": "False",
+		"prescriptionTreatmentType": "Acute Prescription",
+		"dispensingPharmacy": {
+			"phone": "",
+			"ods": "",
+			"name": "",
+			"address": ""
+		},
+		"prescriptionIssueDate": "20200114120100",
+		"prescriptionDownloadDate": "20200114111540",
+		"prescriptionLastIssueDispensedDate": "False",
+		"pendingCancellations": "False",
+		"epsVersion": "R1",
+		"prescriptionClaimedDate": "",
+		"nominatedPharmacy": {
+			"phone": "",
+			"ods": "",
+			"name": "",
+			"address": ""
+		},
+		"prescriber": {
+			"phone": "01482711112",
+			"ods": "B81001",
+			"name": "DR ME AHMED'S PRACTICE",
+			"address": "700 HOLDERNESS ROAD, HULL, NORTH HUMBERSIDE, HU9 3JA"
+		},
+		"lastEventDate": "20200114111540",
+		"repeatInstance": {
+			"totalAuthorised": "1",
+			"currentIssue": "1"
+		},
+		"lineItems": {
+			"9C18AE6F-511F-F7A3-E050-D20AE3A231C8": {
+				"code": "408063002",
+				"description": "Beclometasone 100micrograms/dose inhaler CFC free",
+				"itemStatus": "With Dispenser",
+				"dosage": "As Directed",
+				"uom": "dose",
+				"quantity": "200"
+			},
+			"9C18AE6F-5124-F7A3-E050-D20AE3A231C8": {
+				"code": "320029006",
+				"description": "Atorvastatin 10mg tablets",
+				"itemStatus": "With Dispenser",
+				"dosage": "As Directed",
+				"uom": "tablet",
+				"quantity": "28"
+			}
+		},
+		"prescriptionStatus": "With Dispenser",
+		"patientNhsNumber": "9467157349"
+	},
+	"statusCode": "0"
 }
 ```
 
-*Successful search with multiple prescriptions found*
+
+### Scenario 2: Issue 1 of a repeat dispensing EPS Release 2 prescription.
+
+Given the following request:
+
+```code
+GET https://[spine_host]/mm/nhs111itemdetails?prescriptionId=74A4DF-N82668-00005V&issueNumber=1
+```
+
+The response shows issue 1 of prescription ID `74A4DF-N82668-00005V` 
+
+
+#### Response Headers ####
+
+```code
+TTP/1.1 200 OK
+Date: Tue, 14 Jan 2020 11:58:16 GMT
+Content-Type: application/json
+Connection: keep-alive
+Strict-Transport-Security: max-age=15724800; includeSubDomains
+Etag: "006979ed43406cffb9e28f7f262e20fa29b10b2c"
+Pragma: no-cache
+Cache-Control: no-store
+```
+#### Response Body ####
 
 ```json
 {
-   "statusCode" : "0",
-   "reason" : "",
-   "version" : "1",
-   "54A9B7-C81007-000014" : {
-      "pendingCancellations" : "False",
-      "prescriptionLastIssueDispensedDate" : "False",
-      "prescriptionDownloadDate" : "20190213150209",
-      "repeatInstance" : {
-         "currentIssue" : "1",
-         "totalAuthorised" : "1"
-      },
-      "prescriptionDispensedDate" : "20190215",
-      "prescriptionTreatmentType" : "Repeat Prescribing",
-      "lastEventDate" : "20190215105008",
-      "prescriptionClaimedDate" : "20190215105008",
-      "lineItems" : {
-         "754B10D1-04DA-3828-E050-D20AE3A22BBD" : {
-            "code" : "193611000001107",
-            "quantity" : "84",
-            "itemStatus" : "Not Dispensed",
-            "dosage" : "As Directed",
-            "description" : "Micronor 350microgram tablets (Janssen-Cilag Ltd)",
-            "uom" : "tablet"
-         },
-         "754B10D1-04E9-3828-E050-D20AE3A22BBD" : {
-            "code" : "330987003",
-            "dosage" : "As Directed",
-            "quantity" : "10",
-            "itemStatus" : "Dispensed",
-            "description" : "Sodium bicarbonate 5% ear drops",
-            "uom" : "ml"
-         },
-         "754B10D1-04E4-3828-E050-D20AE3A22BBD" : {
-            "quantity" : "250",
-            "itemStatus" : "Dispensed",
-            "dosage" : "As Directed",
-            "code" : "159411000001102",
-            "uom" : "ml",
-            "description" : "Oilatum Emollient (GlaxoSmithKline Consumer Healthcare)"
-         },
-         "754B10D1-04DF-3828-E050-D20AE3A22BBD" : {
-            "dosage" : "Inject subcutaneously as directed",
-            "quantity" : "4",
-            "itemStatus" : "Dispensed",
-            "code" : "28426011000001108",
-            "uom" : "pre-filled disposable injection",
-            "description" : "Bydureon 2mg powder and solvent for prolonged-release suspension for injecti                                                               on pre-filled pen (AstraZeneca UK Ltd)"
-         }
-      },
-      "nominatedPharmacy" : {
-         "ods" : "",
-         "name" : "",
-         "address" : "",
-         "phone" : ""
-      },
-      "patientNhsNumber" : "9651614498",
-      "prescriber" : {
-         "ods" : "C81007",
-         "name" : "VERNON STREET MEDICAL CTR",
-         "address" : "13 VERNON STREET, DERBY, DERBYSHIRE, DE1 1FW",
-         "phone" : "01512631737"
-      },
-      "epsVersion" : "R2",
-      "prescriptionIssueDate" : "20180907120900",
-      "prescriptionStatus" : "Claimed",
-      "dispensingPharmacy" : {
-         "address" : "The Pharmacy, The Street, SW8 3QJ",
-         "name" : "Test Pharmacy",
-         "ods" : "FA00D",
-         "phone" : "07775123456"
-      }
-   }
+	"reason": "",
+	"74A4DF-N82668-00005V": {
+		"prescriptionDispensedDate": "20200114",
+		"prescriptionTreatmentType": "Repeat Dispensing",
+		"dispensingPharmacy": {
+			"phone": "",
+			"ods": "FRN79",
+			"name": "NORTHAMPTON PCT",
+			"address": "HIGHFIELD, CLIFTONVILLE ROAD, NORTHAMPTON, NN1 5DN"
+		},
+		"prescriptionIssueDate": "20200114120100",
+		"prescriptionDownloadDate": "20200114111531",
+		"prescriptionLastIssueDispensedDate": "False",
+		"pendingCancellations": "False",
+		"epsVersion": "R2",
+		"prescriptionClaimedDate": "",
+		"nominatedPharmacy": {
+			"phone": "",
+			"ods": "FX012",
+			"name": "",
+			"address": ""
+		},
+		"prescriber": {
+			"phone": "01669620339",
+			"ods": "A84002",
+			"name": "THE ROTHBURY PRACTICE",
+			"address": "3 MARKET PLACE, ROTHBURY, MORPETH, NE65 7UW"
+		},
+		"lastEventDate": "20200114111555",
+		"repeatInstance": {
+			"totalAuthorised": "6",
+			"currentIssue": "1"
+		},
+		"lineItems": {
+			"9C18AE6F-513D-F7A3-E050-D20AE3A231C8": {
+				"code": "17315811000001100",
+				"description": "Certolizumab pegol 200mg/1ml solution for injection pre-filled syringes",
+				"itemStatus": "Dispensed",
+				"dosage": "As Directed",
+				"uom": "syringe",
+				"quantity": "2"
+			},
+			"9C18AE6F-5142-F7A3-E050-D20AE3A231C8": {
+				"code": "3602511000001108",
+				"description": "Lidocaine 400mg/20ml (2%) / Adrenaline (base) 100micrograms/20ml (1 in 200,000) solution for injection vials",
+				"itemStatus": "Not Dispensed - Owing",
+				"dosage": "As Directed",
+				"uom": "vial",
+				"quantity": "1"
+			}
+		},
+		"prescriptionStatus": "With Dispenser - Active",
+		"patientNhsNumber": "9467157977"
+	},
+	"version": "1",
+	"statusCode": "0"
 }
+```
+
+
+### Scenario 3: A repeat prescribing prescription at EPS Release 1
+
+Given the following request:
+
+```code
+GET https://[spine_host]/mm/nhs111itemdetails?prescriptionId=9C18AE6F-510D-F7A3-E050-D20AE3A231C8K
+```
+
+#### Response Headers ####
+
+```code
+HTTP/1.1 200 OK
+Date: Tue, 14 Jan 2020 11:55:07 GMT
+Content-Type: application/json
+Connection: keep-alive
+Strict-Transport-Security: max-age=15724800; includeSubDomains
+Etag: "632baa1f2756b5f7c9859171d19d1be970de35ae"
+Pragma: no-cache
+Cache-Control: no-store
+```
+#### Response Body ####
+
+```json
+{
+	"reason": "",
+	"version": "1",
+	"9C18AE6F-510D-F7A3-E050-D20AE3A231C8K": {
+		"prescriptionDispensedDate": "False",
+		"prescriptionTreatmentType": "Repeat Prescribing",
+		"dispensingPharmacy": {
+			"phone": "",
+			"ods": "",
+			"name": "",
+			"address": ""
+		},
+		"prescriptionIssueDate": "20200114120100",
+		"prescriptionDownloadDate": "20200114111540",
+		"prescriptionLastIssueDispensedDate": "False",
+		"pendingCancellations": "False",
+		"epsVersion": "R1",
+		"prescriptionClaimedDate": "",
+		"nominatedPharmacy": {
+			"phone": "",
+			"ods": "",
+			"name": "",
+			"address": ""
+		},
+		"prescriber": {
+			"phone": "01945700223",
+			"ods": "D81015",
+			"name": "PARSON DROVE SURGERY",
+			"address": "240 MAIN ROAD, PARSON DROVE, WISBECH, PE13 4JA"
+		},
+		"lastEventDate": "20200114111540",
+		"repeatInstance": {
+			"totalAuthorised": "1",
+			"currentIssue": "1"
+		},
+		"lineItems": {
+			"9C18AE6F-5129-F7A3-E050-D20AE3A231C8": {
+				"code": "374296008",
+				"description": "Levothyroxine sodium 100microgram tablets",
+				"itemStatus": "With Dispenser",
+				"dosage": "As Directed",
+				"uom": "tablet",
+				"quantity": "28"
+			},
+			"9C18AE6F-512E-F7A3-E050-D20AE3A231C8": {
+				"code": "320000009",
+				"description": "Simvastatin 40mg tablets",
+				"itemStatus": "With Dispenser",
+				"dosage": "As Directed",
+				"uom": "tablet",
+				"quantity": "28"
+			}
+		},
+		"prescriptionStatus": "With Dispenser",
+		"patientNhsNumber": "9467157349"
+	},
+	"statusCode": "0"
+}
+
 ```

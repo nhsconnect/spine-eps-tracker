@@ -16,7 +16,13 @@ This specification describes a single use cases (i.e. Search for a list of presc
 
 ## Prerequisites ##
 
-### Consumer ###
+### Endpoint Authentication ###
+The Spine Interaction Id for this operation is `ExternalPrescriptionSearch_1_0` - endpoints must be registered to use this interaction.
+
+### User Authentication ###
+Users must be authenticated using the [Spine Security Broker](https://nhsconnect.github.io/FHIR-SpineCore/smartcards.html), and provide user details in the HTTP request header.
+
+### Consumer system ###
 
 To search for a list of prescriptions the external system will make an HTTP request which should include, as a minimum, the following parameters:
 
@@ -76,7 +82,7 @@ The incoming headers are validated to ensure the correct type and length of para
 | `Spine-RoleProfileId` | Y | 12 | 12 digits | N |
 | `Eps-TraceId` | N | Max 30 | Up to 30 characters (upper or lower case), digits or the – (dash) | N |
 
-> The Spine Interaction Id for this operation is `ExternalPrescriptionSearch_1_0`.
+
 
 #### HTTP Query String Parameters ####
 
@@ -91,7 +97,7 @@ The parameter names are as follows, note that these are case sensitive:
 | `latestDate`          | parameter | N | Must have the form yyyymmdd | Y |
 | `prescriptionStatus`  | parameter | N | Must be a valid (four digit) prescription state<sup>2</sup> | Y |
 | `prescriptionVersion` | parameter | N | Must be ‘1’, ‘2’, ‘R1’ or ‘R2’ | Y |
-| `version`             | parameter | N | Must be either the previous or current version of the service | N |
+| `version`             | parameter | N | API major version number, fixed value of `1` | N |
 
 *Prescription State*
 
@@ -175,7 +181,7 @@ The response shows, for NHS Number `9691003120`, that in the previous 28 days, t
 2. A repeat prescription with ID `9BA2F6BD-14FE-6F8B-E050-D20AE3A254FDI`, with two items, also currently with dispenser. 
 
 
-#### Reponse Header ####
+#### Reponse Headers ####
 
 ```code
 HTTP/1.1 200 OK
@@ -278,7 +284,7 @@ The response shows, for NHS Number `9691003147`, that in the previous 28 days, t
 Prescription ID `3AF2CB-C86002-0000BX` is a repeat dispensing prescription, and the first of the batch of 6 issues of the prescription currently being dispensed. This is has two items, one of which thus far has been dispensed.
 
 
-#### Reponse Header ####
+#### Reponse Headers ####
 
 ```code
 HTTP/1.1 200 OK

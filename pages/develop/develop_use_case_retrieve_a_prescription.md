@@ -16,7 +16,13 @@ This specification describes a single use case (i.e. Retrieve a prescription).
 
 ## Prerequisites ##
 
-### Consumer ###
+### Endpoint Authentication ###
+The Spine Interaction Id for this operation is `ExternalPrescriptionQuery_1_0` - endpoints must be registered to use this interaction.
+
+### User Authentication ###
+Users must be authenticated using the [Spine Security Broker](https://nhsconnect.github.io/FHIR-SpineCore/smartcards.html), and provide user details in the HTTP request header.
+
+### Consumer system ###
 
 To retrieve a particular prescription the external system will make an HTTP request which should include, as a minimum, the following in the URL:
 
@@ -81,7 +87,7 @@ The parameter names are as follows, note that these are case sensitive:
 
 <sup>1</sup>If not supplied the current issue (instance) will be used. If specified and the instance doesn't exist the rest of the prescription details will be returned but the instance details will be left blank.
 
-> The Spine Interaction Id for this operation is `ExternalPrescriptionQuery_1_0`.
+
 
 #### Error Handling ####
 
@@ -136,7 +142,7 @@ GET https://msg.int.spine2.ncrs.nhs.uk/mm/prescriptions/48A894-C86002-00009E?for
 
 The response shows the basic details of repeat prescription ID `48A894-C86002-00009E`. The prescription is with the dispensing organsation `FRN79`. The prescription has two items, one of which has already been dispensed.
 
-#### Reponse Header ####
+#### Reponse Headers ####
 
 ```code
 HTTP/1.1 200 OK
@@ -210,12 +216,12 @@ Etag: "240ea7f0845a03cffd33d9ee3826be1027cfc74d"
 Given the following request:
 
 ```code
-GET https://msg.int.spine2.ncrs.nhs.uk/mm/prescriptions/3AF2CB-C86002-0000BX?format=trace&issueNumber=2
+GET https://[spine_host]/mm/prescriptions/3AF2CB-C86002-0000BX?format=trace&issueNumber=2
 ```
 
 The response shows the basic details of issue 2 of repeat dispensing prescription ID `3AF2CB-C86002-0000BX`. The prescription issue has two items. As this is a future instance, the items are not with the dispenser.
 
-#### Reponse Header ####
+#### Reponse Headers ####
 
 ```code
 HTTP/1.1 200 OK
