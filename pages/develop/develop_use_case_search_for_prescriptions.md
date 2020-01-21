@@ -19,9 +19,6 @@ This specification describes a single use cases (i.e. Search for a list of presc
 ### Endpoint Authentication ###
 The Spine Interaction Id for this operation is `ExternalPrescriptionSearch_1_0` - endpoints must be registered to use this interaction.
 
-### User Authentication ###
-Users must be authenticated using the [Spine Security Broker](https://nhsconnect.github.io/FHIR-SpineCore/smartcards.html), and provide user details in the HTTP request header.
-
 ### Consumer system ###
 
 To search for a list of prescriptions the external system will make an HTTP request which should include, as a minimum, the following parameters:
